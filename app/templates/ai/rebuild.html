@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>上傳頁面</title>
+    <!-- <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet"> -->
+
+    <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/DataTables/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/sweetalert2.all.min.js') }}"></script>
+    <!-- <script src="{{ url_for('static', path='/assets/javascript/echarts.js') }}"></script> -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="#">重新建模</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="d-flex justify-content-end">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" href="/aiControl">回上頁</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" aria-current="page" href="/aiManage">現有AI模型評估</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" aria-current="page" href="/control">回控制頁面</a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link active" href="/model">model</a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="card container col-10 col-sm-8 col-md-10 p-4 shadow-sm mt-5">
+        <form action="/rebuild" method="post" enctype="multipart/form-data">
+        <div class="card-body row justify-content-center">
+                <h2 class="text-center text-nowrap"><strong>預設建模資料</strong></h2>
+                <div class="col-6">
+                    <p class="text-center text-nowrap">資料來源: 所有病歷追蹤其建模所需欄位之最新資料<br>選用演算法: CART (Classification and Regression Tree)</p>
+                    <input type="hidden" name="algorithm" value="CART">
+                    <!-- <select name="algorithm" class="form-select" aria-label="Default select example">
+                        <option selected value="CART">選用演算法: CART (Classification and Regression
+                            Tree)</option>
+                         <option value="Logistic">選用演算法: Logistic</option>
+                    </select> -->
+
+                </div>
+
+                <input type="hidden" name="FK_AccountID" value="{{fk_account_id}}">
+                <div class="row mb-3 d-flex justify-content-center">
+                    <table id="example" class="table table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <!-- <th><input class="form-check-input" type="checkbox" value="" checked
+                                        onclick="checkAll(this)"></th> -->
+                                <th>Index</th>
+                                <th>Gender</th>
+                                <th>MGFA</th>
+                                <th>Ptosis</th>
+                                <th>Diplopia</th>
+                                <th>Dysphasia</th>
+                                <th>Dysarthria</th>
+                                <th>Dyspnea</th>
+                                <th>LimbWeakness</th>
+                                <th>Pyridostigmine</th>
+                                <th>Compesolone</th>
+                                <th>DiseaseDurationMonths</th>
+                                <th>AgeAtOnset</th>
+                                <th>InHospitalCount</th>
+                                <th>Hyperplasia</th>
+                                <th>Thymoma</th>
+                                <th>Hospitalization</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if df|length > 9 %}
+                            {% for key,value in df.iterrows() %}
+                            <tr>
+                                <!-- <td><input class="form-check-input one_row" onclick="choose()" name="check"
+                                        type="checkbox" value="{{key}}" checked></td> -->
+                                <td>{{ loop.index }}</td> <!-- {{ loop.index }} -->
+                                <td>{{ value['PatientSex'] }}</td>
+                                <td>{{ value['MGFA_Classification'] }}</td>
+                                <td>{{ value['Ptosis'] }}</td>
+                                <td>{{ value['Diplopia'] }}</td>
+                                <td>{{ value['Dysphasia'] }}</td>
+                                <td>{{ value['Dysarthria'] }}</td>
+                                <td>{{ value['Dyspnea'] }}</td>
+                                <td>{{ value['LimbWeakness'] }}</td>
+                                <td>{{ value['Pyridostigmine'] }}</td>
+                                <td>{{ value['Compesolone'] }}</td>
+                                <td>{{ value['DiseaseDurationMonths'] }}</td>
+                                <td>{{ value['AgeAtOnset'] }}</td>
+                                <td>{{ value['InHospitalCount'] }}</td>
+                                <td>{{ value['Hyperplasia'] }}</td>
+                                <td>{{ value['Thymoma'] }}</td>
+                                <td style="background-color: antiquewhite;">{{ value['Hospitalization'] }}</td>
+                            </tr>
+                            {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <div class="row mt-3">
+                        <div class="col-4">
+                            <div class="form-outline">
+                                <input type="number" class="form-control" id="choose_score"
+                                    value="{% if  df|length > 9 %}{{df.shape[0]}}{% endif %}" readonly>
+                                <label class="form-label" for="typeNumber">勾選資料量</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- <div class="mb-3">
+                            <label for="formFile" class="form-label">初步資料:</label>
+                            <input class="form-control" type="file" name="before" accept=".csv" id="formFile">
+                        </div> -->
+                </div>
+                <div class="row mb-3 mt-4">
+                    <h3 class="text-nowrap"><strong>欄位解釋</strong></h3>
+                    <p class="text-nowrap">Gender：0代表女性、1代表男性</p>
+                    <p class="text-nowrap">MGFA：0~7代表I~V分類</p>
+                    <p class="text-nowrap">InHospitalCount：代表統整該病歷本院與外院所有住院次數</p>
+                    <p class="text-nowrap">Hospitalization：預測欄位, 該病歷因惡化而需住院的狀態, 0為不需住院、1為需住院</p>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <input type="hidden" name="CreateTime" value="{{now}}">
+                    {% if not_enough %}
+                    <p class="btn btn-danger w-75 btn-lg">目前資料不足建模(1. 至少需10筆、2. 其中至少2筆未因惡化住院、2筆因惡化住院)</p>
+                    {% elif not_enough != None %}
+                    <button class="submit btn btn-primary w-25 btn-lg">開始建模</button>
+                    {% else %}
+                    <p class="btn btn-danger w-25 btn-lg">目前尚無病歷資料</p>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function checkAll(e) {
+            let all_check_box = document.querySelectorAll(".form-check-input");
+
+            if (e.checked) {
+                all_check_box.forEach(function (i) {
+                    i.checked = true;
+                })
+            }
+            else {
+                all_check_box.forEach(function (i) {
+                    i.checked = false;
+                })
+            }
+
+            choose();
+
+        }
+    </script>
+    <script>
+        function choose() {
+
+            let choose_fields = document.querySelectorAll(".one_row:checked");
+            let choose_total = 0;
+
+
+            document.querySelector("#choose_score").value = choose_fields.length;
+        }
+    </script>
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                // info: false,
+                // searching: false,
+                scrollX: true,
+                scrollY: '60vh',
+                // scrollCollapse: true,
+                paging: false,
+                // order: [[0, 'desc']],
+
+            });
+        });
+    </script>
+    {% if dataTooLess %}
+    <script>
+        Swal.fire({
+            icon: 'warning',
+            title: '選取資料不足',
+            html: '欲重建AI模型需滿足條件: 1. 至少10筆資料、2. 預測欄位Hospitalization需至少兩筆「0」與兩筆「1」。',
+        })
+
+
+    </script>
+    {% endif %}
+
+</body>
+
+</html>

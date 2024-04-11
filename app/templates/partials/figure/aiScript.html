@@ -1,0 +1,236 @@
+<script>
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Pizza');
+        data.addColumn('number', 'Populartiy');
+        data.addRows([
+            ['男性', {{ all_patient_sex[0]| safe }}],
+    ['女性', {{ all_patient_sex[1]| safe }}],
+      ]);
+
+    var options = {
+        title: '性別分布',
+        sliceVisibilityThreshold: .2,
+        titleTextStyle: {
+            // color: <string>,    // any HTML string color ('red', '#cc00cc')
+            // fontName: <string>, // i.e. 'Times New Roman'
+            fontSize: 24, // 12, 18 whatever you want (don't specify px)
+            // bold: <boolean>,    // true or false
+            // italic: <boolean>   // true of false
+        }
+    };
+
+    let sex_id = "sex_{{create_time}}";
+    var chart = new google.visualization.PieChart(document.getElementById(sex_id));
+    chart.draw(data, options);
+    }
+</script>
+
+
+<script>
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Pizza');
+        data.addColumn('number', 'Populartiy');
+        data.addRows([
+            ['I', {{ all_mgfa[0]| safe }}],
+    ['IIA', {{ all_mgfa[1]| safe }}],
+        ['IIB', {{ all_mgfa[2]| safe }}],
+        ['IIIA', {{ all_mgfa[3]| safe }}],
+        ['IIIB', {{ all_mgfa[4]| safe }}],
+        ['IVA', {{ all_mgfa[5]| safe }}],
+        ['IVB', {{ all_mgfa[6]| safe }}],
+        ['V', {{ all_mgfa[7]| safe }}],
+  ]);
+
+    var options = {
+        title: 'MGFA分類分布',
+        sliceVisibilityThreshold: .001,
+        titleTextStyle: {
+            fontSize: 24
+        }
+    };
+
+    let mgfa_id = "mgfa_{{create_time}}";
+    var chart = new google.visualization.PieChart(document.getElementById(mgfa_id));
+    chart.draw(data, options);
+}
+</script>
+
+
+<script>
+    google.charts.load('current', { 'packages': ['bar'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Symptoms', 'Ptosis', 'Diplopia', 'Dysphasia', 'Dysarthria', 'Dyspnea', 'LimbWeakness'],
+            {{ all_symptom| safe}}
+        ]);
+
+    var options = {
+        chart: {
+            title: '現有症狀分布',
+        },
+        titleTextStyle: {
+            fontSize: 24
+        }
+    };
+
+    var chart = new google.charts.Bar(document.getElementById('symptom'));
+
+    chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+</script>
+
+<script>
+    google.charts.load('current', { 'packages': ['bar'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Medicine', 'Pyridostigmine', 'Compesolone'],
+            {{ all_medicine| safe}}
+        ]);
+
+    var options = {
+        chart: {
+            title: '用藥頻率分布',
+        },
+        titleTextStyle: {
+            fontSize: 24
+        }
+    };
+
+    var chart = new google.charts.Bar(document.getElementById('medicine'));
+
+    chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+</script>
+
+<script>
+    var x0 = {{ all_disease_duration_months }};
+
+    var trace1 = {
+        x: x0,
+        type: 'box',
+        name: '',
+        boxmean: true,
+        // marker: {
+        //     color: 'rgb(8,81,156)',
+        //     angle: 10
+        // },
+        hoverlabel: {
+            font: {
+                size: 20
+            }
+        },
+        boxpoints: 'all'
+    };
+
+    var layout = {
+        title: '疾病持續月數盒鬚圖',
+        font: {
+            size: 18
+        },
+       
+    };
+  
+    var data = [trace1];
+
+    Plotly.newPlot('disease_duraion_months', data, layout);
+</script>
+
+<script>
+    var x0 = {{ all_age_at_onset }};
+
+    var trace1 = {
+        x: x0,
+        type: 'box',
+        name: '',
+        marker: {color: '#3D9970'},
+        hoverlabel: {
+            font: {
+                size: 20
+            }
+        },
+        boxmean: true,
+        boxpoints: 'all'
+    };
+
+    var layout = {
+        title: '發病年紀盒鬚圖',
+        font: {
+            size: 18
+        },
+       
+    };
+  
+    var data = [trace1];
+
+    Plotly.newPlot('age_at_onset', data, layout);
+</script>
+
+<script>
+    var x0 = {{ all_in_hospital_count }};
+
+    var trace1 = {
+        x: x0,
+        type: 'box',
+        name: '',
+        marker: {color: '#FF4136'},
+        hoverlabel: {
+            font: {
+                size: 20
+            }
+        },
+        boxmean: true,
+        boxpoints: 'all'
+    };
+
+    var layout = {
+        title: '住院次數盒鬚圖',
+        font: {
+            size: 18
+        },
+       
+    };
+  
+    var data = [trace1];
+
+    Plotly.newPlot('in_hospital_count', data, layout);
+</script>
+
+
+<script>
+    google.charts.load('current', { 'packages': ['bar'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Ct and Hospitalizaion', 'Hyperplasia', 'Thymoma', 'Hospitalization'],
+            {{ all_ct_and_hospitalizaion| safe}}
+        ]);
+
+    var options = {
+        chart: {
+            title: '重要指標分布',
+        },
+        titleTextStyle: {
+            fontSize: 24
+        }
+    };
+
+    var chart = new google.charts.Bar(document.getElementById('ct_and_hospitalizaion'));
+
+    chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+</script>

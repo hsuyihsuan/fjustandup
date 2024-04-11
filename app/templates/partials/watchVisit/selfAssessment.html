@@ -1,0 +1,19 @@
+<div hx-target="this" hx-swap="outerHTML">
+    <div class="d-flex justify-content-between">
+        <div class="col-2">
+            <label for="self_assessment" class="form-label">自覺嚴重程度</label>
+            <input type="text" class="form-control" id="self_assessment" value="{% if visit.SelfAssessment == 0 %}輕度{% elif visit.SelfAssessment == 1 %}中度
+                {%else %}重度{% endif %}" readonly></input>
+        </div>
+        <div>
+            <!-- <button hx-get="/updateSelfAssessment/{{patient_id}}/{{visit.VisitDate}}" class="btn btn-primary">編輯</button> -->
+        </div>
+       
+    </div>
+    <div class="col-11 py-3">
+        <label for="note" class="form-label">附註</label>
+        <textarea name="Note" id="note" class="form-control" rows="4" maxlength="60">{% if visit.Note != 'na' %}{{visit.Note}}{% else %}尚無紀錄{% endif %}</textarea>
+        <!-- <input type="text" name="Note" id="note" class="form-control" max="30"
+            value="" readonly> -->
+    </div>
+</div>

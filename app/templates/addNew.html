@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增病歷</title>
+    <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+    <!-- <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet"> -->
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/assets/css/style.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/_hyperscript.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="toggle">
+            <a href="#" class="burger js-menu-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span></span>
+            </a>
+        </div>
+        <div class="side-inner">
+
+            <!-- <div class="profile">
+               未來可能作為個人設置用區塊
+                <h3 class="name">Craig David</h3>
+                <span class="country">Web Designer</span>
+            </div> -->
+
+
+            <div class="nav-menu">
+                <ul>
+                    <li><a href="#basic_block"><span class="icon-notifications mr-3"></span>基本資料</a></li>
+                    <li><a href="#medicine_block"><span class="icon-location-arrow mr-3"></span>用藥資訊</a></li>
+                    <li><a href="#thymus_block"><span class="icon-pie-chart mr-3"></span>胸腺資訊</a></li>
+                    <li><a href="#blood_test_block"><span class="icon-pie-chart mr-3"></span>抗體抽血資訊</a></li>
+                    <li><a href="#qol_block"><span class="icon-pie-chart mr-3"></span>生活品質量表(QOL)</a></li>
+                    <li><a href="#qmg_block"><span class="icon-pie-chart mr-3"></span>QMG Score量表</a></li>
+                    <li><a href="#mg_composite_block"><span class="icon-pie-chart mr-3"></span>MG Composite量表</a></li>
+                    <li><a href="#adl_block"><span class="icon-pie-chart mr-3"></span>日常生活量表(ADL)</a></li>
+                    <li><a href="#assessment_block"><span class="icon-pie-chart mr-3"></span>評估資訊</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <main class="container col-10">
+        <div class="row justify-content-center">
+            <div class="d-flex justify-content-between pt-3">
+                <div class="col-4"><a class="fs-4 fw-bold" href="/add">返回輸入病歷號</a></div>
+                <div class="col-4 fs-4 fw-bold text-end pe-2" style="color: #EC407A">*此為初診病歷號碼</div>
+            </div>
+
+            <form method="post" action="/addNew" class="needs-validation" novalidate>
+                <div class="container"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="basic_block">
+                        基本資料
+                    </div>
+                    <div class="row justify-content-around pt-4">
+                        <div class="col-5">
+                            <label for="patient_id" class="form-label">病歷號碼</label>
+                            <input type="text" id="patient_id" class="form-control" value="{{patient_id}}" disabled>
+                            <input type="hidden" name="FK_PatientID" id="patient_id_for_fk" value="{{patient_id}}">
+                            <input type="hidden" name="patient_id" value="{{patient_id}}">
+                            <input type="hidden" name="PK_PatientID" value="{{patient_id}}">
+                            <input type="hidden" name="FK_AccountID" value="{{session_account}}">
+                        </div>
+                        <div class="col-5">
+                            <label for="patient_name" class="form-label">姓名</label>
+                            <input type="text" name="PatientName" id="patient_name" class="form-control" minlength="1"
+                                maxlength="35" pattern="[^$#!?@&]*" value="{{patient.PatientName}}" readonly disabled>
+                            <div class="invalid-feedback">請輸入姓名符合格式 (不可為特殊符號如 "$#!?@&" )</div>
+                        </div>
+
+                    </div>
+                    <div class="row justify-content-around pt-4">
+                        <div class="col-5 row">
+                            <div class="col-6">
+                                <label for="patient_birth" class="form-label">出生日期</label>
+                                <input type="date" name="PatientBirth" class="form-control" min="{{min_input_date}}"
+                                    max="{{today}}" value="{{patient.PatientBirth}}" disabled>
+                                <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                            </div>
+                            <div class="col-6">
+                                <label for="patient_birth" class="form-label">年紀</label>
+                                <input type="text" class="form-control" value="{{patient_age}}歲" disabled>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div>性別</div>
+                            <div class="row justify-content-evenly pt-2">
+                                <div class="form-check form-check-inline col-5">
+                                    <label for="male" class="form-check-label">男</label>
+                                    <input type="radio" name="PatientSex" id="male" class="form-check-input" value="1"
+                                        {% if patient.PatientSex %}checked{% endif %} disabled>
+                                </div>
+                                <div class="form-check form-check-inline col-5">
+                                    <label for="female" class="form-check-label">女</label>
+                                    <input type="radio" name="PatientSex" id="female" class="form-check-input" value="0"
+                                        {% if patient.PatientSex==0 %}checked{% endif %} disabled>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    <div class="row justify-content-around mt-5">
+                        <div id="visit_state" class="col-5">
+                            <div>
+                                就診狀態
+                            </div>
+                            <div class="row justify-content-evenly">
+                                <div class="form-check form-check-inline col-5">
+                                    <label for="just_visit" class="form-label">看診</label>
+                                    <input type="radio" name="check_if_in_hospital" id="just_visit"
+                                        class="form-check-input" value="0" _="on click remove #in_hospital_state"
+                                        checked>
+                                    <input type="hidden" name="Treat" value="0">
+                                </div>
+                                <div class="form-check form-check-inline col-5">
+                                    <label for="in_hospital" class="form-label">住院</label>
+                                    <input type="radio" name="check_if_in_hospital" id="in_hospital"
+                                        class="form-check-input" hx-get="/add" hx-target="#visit_state"
+                                        hx-swap="beforeend">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-5">
+                            <label for="visit_date" class="form-label">就診日期</label>
+                            <input type="date" name="VisitDate" id="visit_date" class="form-control" value="{{today}}"
+                                min="{{min_input_date}}" max="{{today}}">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+
+
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5 range">
+                            <label for="patient_height">身高</label> <!-- id不能設為純粹"height", 猜測為與css的height相衝 -->
+                            <input type="range" name="Height" id="patinet_height" class="form-range" value="160"
+                                min="30" max="240" step="0.1" oninput="height_number.value=value" required>
+                            <input type="number" id="height_number" class="form-control text-center" value="160"
+                                min="50" max="220" step="0.1" oninput="patinet_height.value=value">
+                            <div class="invalid-feedback">身高需介於 30 ~ 240 cm </div>
+                        </div>
+                        <div class="col-5 range">
+                            <label for="weight">體重</label>
+                            <input type="range" name="Weight" id="weight" class="form-range" value="58" min="5"
+                                max="160" step="0.1" oninput="weight_number.value=value" required>
+                            <input type="number" id="weight_number" class="form-control text-center" value="58" min="5"
+                                max="160" step="0.1" oninput="weight.value=value">
+                            <div class="invalid-feedback">體重需介於 5 ~ 160 kg </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5 range">
+                            <label for="sbp">收縮壓</label>
+                            <input type="range" id="sbp" class="form-range" min="30" max="200"
+                                oninput="sbp_number.value=value" value="120" required>
+                            <input type="number" name="Sbp" id="sbp_number" class="form-control text-center" min="30"
+                                max="200" value="120" oninput="sbp.value=value">
+                            <div class="invalid-feedback">收縮壓需介於 30 ~ 200 mmHg </div>
+                        </div>
+                        <div class="col-5 range">
+                            <label for="dbp">舒張壓</label>
+                            <input type="range" id="dbp" class="form-range" value="" min="1" max="140"
+                                oninput="dbp_number.value=value" value="80" required>
+                            <input type="number" name="Dbp" id="dbp_number" class="form-control text-center" min="1"
+                                max="140" value="80" oninput="dbp.value=value">
+                            <div class="invalid-feedback">舒張壓需介於 1 ~ 140 mmHg </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5">
+                            <label for="attack_date" class="form-label">發病日期</label>
+                            <input type="date" name="AttackDate" id="attack_date" class="form-control" value="{{today}}"
+                                min="{{min_input_date}}" max="{{today}}" required>
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                        <div class="col-5"></div>
+                    </div>
+                    <div class="row justify-content-around pt-4">
+                        <div class="col-5">
+                            發病初始症狀
+                        </div>
+                        <div class="col-5">
+                            現有症狀
+                        </div>
+                        <div class="col-5">
+                            <div class="form-check form-check-inline">
+                                <label for="eye" class="form-check-label">眼肌型</label>
+                                <input type="radio" name="BeginSymptom" id="eye" class="form-check-input" value="0"
+                                    checked>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="mouth" class="form-check-label">口咽型</label>
+                                <input type="radio" name="BeginSymptom" id="mouth" class="form-check-input" value="1">
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="limb" class="form-check-label">四肢型</label>
+                                <input type="radio" name="BeginSymptom" id="limb" class="form-check-input" value="2">
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Ptosis" value="0">
+                                <input type="checkbox" name="Ptosis" id="ptosis" class="form-check-input" value="1">
+                                <label for="ptosis" class="form-check-label">
+                                    眼瞼下垂
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Diplopia" value="0">
+                                <input type="checkbox" name="Diplopia" id="diplopia" class="form-check-input" value="1">
+                                <label for="diplopia" class="form-check-label">
+                                    複視
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Dysphasia" value="0">
+                                <input type="checkbox" name="Dysphasia" id="dysphasia" class="form-check-input"
+                                    value="1">
+                                <label for="dysphasia" class="form-check-label">
+                                    吞嚥困難
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Dysarthria" value="0">
+                                <input type="checkbox" name="Dysarthria" id="dysarthria" class="form-check-input"
+                                    value="1">
+                                <label for="dysarthria" class="form-check-label">
+                                    講話不清
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Dyspnea" value="0">
+                                <input type="checkbox" name="Dyspnea" id="dyspnea" class="form-check-input" value="1">
+                                <label for="dyspnea" class="form-check-label">
+                                    呼吸困難
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="LimbWeakness" value="0">
+                                <input type="checkbox" name="LimbWeakness" id="limb_weakness" class="form-check-input"
+                                    value="1">
+                                <label for="limb_weakness" class="form-check-label">
+                                    手腳無力
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5">
+                            MGFA臨床分類
+                        </div>
+                        <div class="col-5"></div>
+
+                    </div>
+                    <div class="row justify-content-around ps-5">
+                        <div class="col-7">
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <label for="I" class="form-check-label">I</label>
+                                    <input type="radio" name="MGFA_Classification" id="I" class="form-check-input"
+                                        value="0" checked>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label for="IIA" class="form-check-label">IIA</label>
+                                    <input type="radio" name="MGFA_Classification" id="IIA" class="form-check-input"
+                                        value="1">
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label for="IIB" class="form-check-label">IIB</label>
+                                    <input type="radio" name="MGFA_Classification" id="IIB" class="form-check-input"
+                                        value="2">
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label for="IIIA" class="form-check-label">IIIA</label>
+                                    <input type="radio" name="MGFA_Classification" id="IIIA" class="form-check-input"
+                                        value="3">
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label for="IIIB" class="form-check-label">IIIB</label>
+                                    <input type="radio" name="MGFA_Classification" id="IIIB" class="form-check-input"
+                                        value="4">
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label for="IVA" class="form-check-label">IVA</label>
+                                    <input type="radio" name="MGFA_Classification" id="IVA" class="form-check-input"
+                                        value="5">
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label for="IVB" class="form-check-label">IVB</label>
+                                    <input type="radio" name="MGFA_Classification" id="IVB" class="form-check-input"
+                                        value="6">
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label for="V" class="form-check-label">V</label>
+                                    <input type="radio" name="MGFA_Classification" id="V" class="form-check-input"
+                                        value="7">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-5"></div>
+                    </div>
+                    <div class="row justify-content-around pt-4">
+                        <div class="col-5">
+                            <div>
+                                <input type="hidden" name="InOtherHospitalCount" value="0">
+                                <label for="in_other_hospital_date" class="form-label">最近外院住院日期</label>
+                                <input type="date" name="InOtherHospitalDate" id="in_other_hospital_date"
+                                    class="form-control" min="{{min_input_date}}" max="{{today}}" hx-get="/add"
+                                    hx-trigger="change" hx-headers='{"htmxHeader": "inOtherHospitalDate"}'
+                                    hx-target="#in_other_hospital" hx-swap="outerHTML">
+                                <!--_="on change remove #in_other_hospital_count"-->
+                                <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                            </div>
+                        </div>
+                        <div id="in_other_hospital" class="col-5"></div>
+                    </div>
+                    <div class="row justify-content-around pt-4" id="add_other_disease">
+                        <div class="col-5">
+                            <div class="row">
+                                <div class="col-10">
+                                    <label class="visually-hidden" for="inlineFormInputGroupUsername">其他疾病</label>
+                                    <div class="input-group">
+                                        <input type="text" name="OtherDiseaseName" class="form-control"
+                                            id="inlineFormInputGroupUsername" placeholder="其他疾病" maxlength="40" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-primary btn-floating" hx-get="/add"
+                                        hx-target="#add_other_disease" hx-include="[name=OtherDiseaseName]"
+                                        hx-swap="afterend">
+                                        <i class="fas fa-plus fa-2x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+
+                        </div>
+                        <!-- <div class="col-3">
+                            <label for="other_disease" class="form-label">其他疾病</label>
+                            <input type="text" name="OtherDiseaseName" id="other_disease"
+                                class="other_disease form-control"> hx-get="/add" hx-target="#other_disease_block"
+                                    hx-include="[name=patient_id]" hx-swap="aftereend"
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary btn-floating">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="col-5">
+
+                        </div> -->
+                    </div>
+                    <div class="pb-4">
+
+                    </div>
+
+                    <!-- <div class="row justify-content-around pb-4">
+                        <div id="other_disease_block" class="col-5"></div>
+                        <div class="col-5"></div>
+                    </div> -->
+
+                </div>
+
+                <div class="container mt-5"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="medicine_block">
+                        用藥資訊
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5 range">
+                            <label for="pyridostigmine">大力丸(Pyridostigmine)</label>
+                            <input type="range" name="Pyridostigmine" id="pyridostigmine" class="form-range" value="0"
+                                min="0" max="9" oninput="pyridostigmine_number.value=value">
+                            <input type="number" name="Pyridostigmine" id="pyridostigmine_number"
+                                class="form-control text-center" value="0" min="0" max="9"
+                                oninput="pyridostigmine.value=value">
+                            <div class="invalid-feedback">用藥需介於 0 ~ 9 顆</div>
+                        </div>
+                        <div class="col-5 range">
+                            <label for="compesolone">類固醇(Compesolone)</label>
+                            <input type="range" name="Compesolone" id="compesolone" class="form-range" value="0" min="0"
+                                max="20" oninput="compesolone_number.value=value">
+                            <input type="number" name="Compesolone" id="compesolone_number"
+                                class="form-control text-center" value="0" min="0" max="20"
+                                oninput="compesolone.value=value">
+                            <div class="invalid-feedback">用藥需介於 0 ~ 20 顆</div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5 range">
+                            <label for="cellcept">山喜多(Cellcept)</label>
+                            <input type="range" name="Cellcept" id="cellcept" class="form-range" value="0" min="0"
+                                max="9" oninput="cellcept_number.value=value">
+                            <input type="number" name="Cellcept" id="cellcept_number" class="form-control text-center"
+                                value="0" min="0" max="9" oninput="cellcept.value=value">
+                            <div class="invalid-feedback">用藥需介於 0 ~ 9 顆</div>
+                        </div>
+                        <div class="col-5 range">
+                            <label for="imuran">移護寧(Imuran)</label>
+                            <input type="range" name="Imuran" id="imuran" class="form-range" value="0" min="0" max="9"
+                                oninput="imuran_number.value=value">
+                            <input type="number" name="Imuran" id="imuran_number" class="form-control text-center"
+                                value="0" min="0" max="9" oninput="imuran.value=value">
+                            <div class="invalid-feedback">用藥需介於 0 ~ 9 顆</div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-3 pb-2">
+                        <div class="col-5 range">
+                            <label for="imuran">普洛可富(Prograf)</label>
+                            <input type="range" name="Prograf" id="prograf" class="form-range" value="0" min="0" max="9"
+                                oninput="prograf_number.value=value">
+                            <input type="number" name="Prograf" id="prograf_number" class="form-control text-center"
+                                value="0" min="0" max="9" oninput="prograf.value=value">
+                            <div class="invalid-feedback">用藥需介於 0 ~ 9 顆</div>
+                        </div>
+                        <div class="col-5">
+
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-3 pb-2" id="other_medicine_block">
+                        <div class="col-5">
+                            <div>
+                                <div class="row g-3 align-items-center p-1 other_medicine_block">
+                                    <div class="col-10">
+                                        <input type="text" name="OtherMedicineName" id="other_medicine"
+                                            class="form-control" pattern="[^\s]*" placeholder="其他用藥"> <!--hx-get="/add"
+                                                hx-target="#other_medicine_block" hx-swap="beforeend"
+                                                hx-include="[name=patient_id]"-->
+                                    </div>
+                                    <div class="col-2">
+                                        <button type="button" class="btn btn-primary btn-floating" hx-get="/add"
+                                            hx-target="#other_medicine_block" hx-include="[name=OtherMedicineName]"
+                                            hx-swap="afterend">
+                                            <i class="fas fa-plus fa-2x"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center p-1">
+                                    <div class="col-9 range">
+                                        <input type="range" name="OtherMedicineCount" id="id_OtherMedicineName"
+                                            class="form-range" value="1" min="1" max="9"
+                                            oninput="number_OtherMedicineName.value=value">
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="number" name="" id="number_OtherMedicineName"
+                                            class="form-control text-center" value="1" min="1" max="9"
+                                            oninput="id_OtherMedicineName.value=value">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="other_medicine_block"></div>
+                        </div>
+                        <div class="col-5"></div>
+                    </div>
+                </div>
+                <div class="container mt-5"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="thymus_block">
+                        胸腺資訊
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5">
+                            <!-- 若一對一則需要此行 <input type="hidden" name="ThymusStatus" value="-1"> -->
+                            <label for="ct_date" class="form-label">電腦斷層日期</label>
+                            <input type="date" name="CtDate" id="ct_date" class="form-control" min="{{min_input_date}}"
+                                max="{{today}}" hx-get="/add" hx-trigger="change" hx-target="#thymus"
+                                hx-swap="beforeend" hx-include="[name=patient_id]" _="on change remove #thymus_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                        <div class="col-5"></div>
+                    </div>
+                    <div class="row justify-content-around py-3" id="thymus">
+
+                    </div>
+                </div>
+                <div class="container mt-5"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="blood_test_block">
+                        抗體抽血資訊
+                    </div>
+                    <div class="row justify-content-around py-3">
+                        <div class="col-5">
+                            <!-- 若一對一則需要此行 <input type="hidden" name="ThymusStatus" value="-1"> -->
+                            <label for="blood_test_date" class="form-label">抽血日期</label>
+                            <input type="date" name="BloodTestDate" id="blood_test_date" class="form-control"
+                                min="{{min_input_date}}" max="{{today}}" hx-get="/add" hx-trigger="change"
+                                hx-target="#blood_test" hx-swap="beforeend" hx-include="[name=patient_id]"
+                                _="on change remove #blood_test_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                        <div class="col-5"></div>
+                    </div>
+                    <div id="blood_test"></div>
+                </div>
+                <div class="container mt-5"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="qol_block">
+                        生活品質量表(QOL)
+                    </div>
+                    <div class="row justify-content-center py-3">
+                        <div id="qol" class="col-10">
+                            <label for="qol_date" class="form-label">施測日期</label>
+                            <input type="date" name="QOL_Date" id="qol_date" class="form-control"
+                                min="{{min_input_date}}" max="{{today}}" hx-get="/add" hx-trigger="change"
+                                hx-target="#qol" hx-include="[name=patient_id]" hx-swap="beforeend"
+                                _="on change remove #qol_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container mt-5"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="qmg_block">
+                        QMG Score量表
+                    </div>
+                    <div class="row justify-content-center py-3">
+                        <div id="qmg" class="col-10">
+                            <label for="qol_date" class="form-label">施測日期</label>
+                            <input type="date" name="QMG_Date" id="qmg_date" class="form-control"
+                                min="{{min_input_date}}" max="{{today}}" hx-get="/add" hx-trigger="change"
+                                hx-target="#qmg" hx-include="[name=patient_id]" hx-swap="beforeend"
+                                _="on change remove #qmg_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="container mt-5"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="mg_composite_block">
+                        MG Composite量表
+                    </div>
+                    <div class="row justify-content-center py-3">
+                        <div id="mg_composite" class="col-10">
+                            <label for="mg_composite_date" class="form-label">施測日期</label>
+                            <input type="date" name="MGComposite_Date" id="mg_composite_date" class="form-control"
+                                min="{{min_input_date}}" max="{{today}}" hx-get="/add" hx-trigger="change"
+                                hx-target="#mg_composite" hx-include="[name=patient_id]" hx-swap="beforeend"
+                                _="on change remove #mg_composite_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container mt-5"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="adl_block">
+                        日常生活量表(ADL)
+                    </div>
+                    <div class="row justify-content-center py-3">
+                        <div id="adl" class="col-10">
+                            <label for="adl_date" class="form-label">施測日期</label>
+                            <input type="date" name="ADL_Date" id="adl_date" class="form-control"
+                                min="{{min_input_date}}" max="{{today}}" hx-get="/add" hx-trigger="change"
+                                hx-target="#adl" hx-include="[name=patient_id]" hx-swap="beforeend"
+                                _="on change remove #adl_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container mt-5"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                    <div class="row justify-content-center fs-1 fw-bold py-2" id="assessment_block">
+                        評估資訊
+                    </div>
+                    <div class="row justify-content-around py-2">
+                        <div class="col-5">自覺嚴重程度</div>
+                        <div class="col-5"></div>
+                        <div class="col-11">
+                            <div class="form-check form-check-inline col-3">
+                                <label for="mild" class="form-check-label">輕度</label>
+                                <input type="radio" name="SelfAssessment" id="mild" class="form-check-input" value="0"
+                                    checked>
+                            </div>
+                            <div class="form-check form-check-inline col-3">
+                                <label for="moderate" class="form-check-label">中度</label>
+                                <input type="radio" name="SelfAssessment" id="moderate" class="form-check-input"
+                                    value="1">
+                            </div>
+                            <div class="form-check form-check-inline col-3">
+                                <label for="severe" class="form-check-label">重度</label>
+                                <input type="radio" name="SelfAssessment" id="severe" class="form-check-input"
+                                    value="2">
+                            </div>
+                        </div>
+                        <div class="col-11 py-3">
+                            <label for="note" class="form-label">附註</label>
+                            <textarea name="Note" id="note" class="form-control" rows="4" maxlength="100"></textarea>
+
+                            <!-- <input type="text" name="Note" class="form-control" max="30"> -->
+                        </div>
+                    </div>
+                    <!-- 未來開發警示功能用 -->
+                    <div class="row justify-content-around py-3">
+                        <div class="col-2 ms-4">
+                            <label class="col-form-label form-check-label" for="flexSwitchCheckChecked">是否需警示</label>
+                        </div>
+                        <div class="col-2 mt-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckDefault" name="alert" value="1" />
+                                <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                            </div>
+                        </div>
+                        <div class="col-2"></div>
+                        <div class="col-2"></div>
+                        <div class="col-2"></div>
+
+
+                    </div>
+                </div>
+
+
+                <div class="py-4 d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary btn-lg">確認送出</button>
+                </div>
+
+
+
+            </form>
+        </div>
+
+    </main>
+
+
+    <script src="{{ url_for('static', path='/assets/javascript/sidebar.js') }}"></script>
+
+
+
+    <script src="{{ url_for('static', path='/assets/javascript/rangeInputConnectnumberInput.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/survey.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    <script>
+        (() => {
+            'use strict';
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms).forEach((form) => {
+                form.addEventListener('submit', (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+<div class="col-5 range" id="in_other_hospital">
+    <label for="in_other_hospital_count">外院住院總次數</label>
+    {% if inOtherHospitalDateHasVisited %}
+    {% else %}
+    <input type="range"  id="in_other_hospital_count_input" class="form-range" value="1"
+        min="1" max="100" oninput="in_other_hospital_count_number.value=value" required>
+    {% endif %}
+    <input type="number" name="InOtherHospitalCount" value="1" min="1" max="100" id="in_other_hospital_count_number"
+        class="form-control text-center" oninput="in_other_hospital_count_input.value=value">
+    <div class="invalid-feedback">次數需介於 1 ~ 100次 </div>
+</div>

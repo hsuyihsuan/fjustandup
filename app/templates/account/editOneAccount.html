@@ -1,0 +1,102 @@
+<form id="modal-backdrop" hx-put="/updateAccount" hx-target="this" hx-swap="outerHTML">
+    <div class="modal-backdrop fade show" style="display:block;"></div>
+    <div id="modal" class="modal fade show" tabindex="-1" style="display:block;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">帳號狀態控制</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                       <!-- <div class="row justify-content-start"> -->
+                            <input type="hidden" name="PK_AccountID" value="{{account.PK_AccountID}}">
+                          <!--    <div class="col-2">
+                                <label for="user_name" clas="col-form-label">職稱</label>
+                            </div>
+                            <div class="col-8">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Job" id="inlineRadio1"
+                                        value="doctor" {% if account.Job=='doctor' %}checked{% endif %} hx-get="/jobNameModify" hx-target="#job_name" hx-swap="outherHTML" hx-include="[name=PK_AccountID]">
+                                    <label class="form-check-label" for="inlineRadio1">醫師</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Job" id="inlineRadio2"
+                                        value="nurse" {% if account.Job=='nurse' %}checked{% endif %} hx-get="/jobNameModify" hx-target="#job_name" hx-swap="outherHTML" hx-include="[name=PK_AccountID]">
+                                    <label class="form-check-label" for="inlineRadio2">護理師</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Job" id="inlineRadio3"
+                                        value="other" {% if account.Job !='doctor' and account.Job !='nurse' %}checked{%
+                                        endif %} hx-get="/jobNameModify" hx-target="#job_name" name="Job" id="other" value="other" hx-swap="outherHTML" hx-include="[name=PK_AccountID]">
+                                    <label class="form-check-label" for="inlineRadio3">其他</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                       {% if account.Job !='doctor' and account.Job !='nurse' %}
+                            {% include "account/otherJobNameModify.html" %}
+                       {% else %}
+                       <div class="row justify-content-center mt-3" id="job_name"></div>
+                       {% endif %} 
+                        <div class="row justify-content-start mt-3">
+                            <div class="col">
+                                <label for="user_name" clas="col-form-label">使用者名稱</label>
+                                <input id="user_name" type="text" class="form-control" name="UserName"
+                                    value="{{account.UserName}}">
+                            </div>
+                        </div>
+                        <div class="row justify-content-start mt-3">
+                            <div class="col">
+                                <label for="user_name" clas="col-form-label">帳號名稱</label>
+                                <input id="user_name" type="text" class="form-control" name="AccountName"
+                                    value="{{account.AccountName}}">
+                            </div>
+                        </div>
+                        <div class="row justify-content-start mt-3">
+                            <div class="col">
+                                <label for="email" clas="col-form-label">Email</label>
+                                <input id="email" type="email" class="form-control" name="Email"
+                                    value="{{account.Email}}">
+                            </div>
+                        </div> -->
+                        {% if account.UserRole == 'uncheck' %}
+                        <h4><strong>該帳號仍待開通，尚不可操作</strong></h4>
+                        {% else %}
+                        <div class="row justify-content-start">
+                            <div class="col-2">
+                                <label for="user_name" clas="col-form-label">權限</label>
+                            </div>
+                            <div class="col-10">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="UserRole" id="inlineRadio1"
+                                        value="{{account.Job}}" {% if account.UserRole in ['clerk', 'doctor'] %}checked{% endif %}>
+                                    <label class="form-check-label" for="inlineRadio1">啟用</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="UserRole" id="inlineRadio2"
+                                        value="close" {% if account.UserRole == 'close' %}checked{% endif %}>
+                                    <label class="form-check-label" for="inlineRadio2">停用</label>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="submit" class="btn btn-primary finish">確認修改</button>
+                    <!-- <button type="submit" class="btn btn-danger finish" hx-get="/deleteAccount/{{account.PK_AccountID}}" hx-confirm="您確定要刪除此帳號嗎？">刪除</button> -->
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">離開返回</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).on("click", ".finish", function () {
+            setTimeout(function () {
+                location.reload();
+            }, 10); // 3000 milliseconds = 3 secondss
+        });
+    </script>
+</form>

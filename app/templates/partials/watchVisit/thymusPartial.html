@@ -1,0 +1,27 @@
+<div id="thymus_input">
+    <div class="container">
+        <div class="row my-3 justify-content-start">
+            <div class="col-2">
+                <label for="thymus_result" class="col-form-label">電腦斷層結果</label>
+            </div>
+            <div class="col-2">
+                <input type="text" id="thmus_result" class="form-control"
+                    value="{% if one_thymus.ThymusStatus == 0 %}正常{% elif one_thymus.ThymusStatus == 1 %}胸腺萎縮{% elif one_thymus.ThymusStatus == 2 %}胸腺增生{% else %}胸腺瘤{% endif%}"
+                    readonly>
+            </div>
+            <div class="col-6">
+
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-2">
+                <label for="thymus_description" class="col-form-label">基本病理描述</label>
+            </div>
+            <div class="col-6">
+                <input type="text" id="thymus_description" class="form-control"
+                    value="{% if one_thymus.ThymusDescription != 'na' %}{{one_thymus.ThymusDescription}}{% else %}尚無紀錄{% endif %}"
+                    readonly>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,568 @@
+
+
+<script>
+    var dom = document.getElementById('medicine_fig');
+
+    // let medicine_dates = ['product'];
+    // medicine_dates.push({{ all_visit_date_asc| safe}});
+    let medicine_dates = {{ all_visit_date_asc| safe}};
+    // medicine_dates = medicine_start.concat(medicine_dates)
+
+
+    let pyridostigmine_data = {{ pyridostigmine| safe}};
+    let compesolone_data = {{ compesolone| safe}};
+    let cellcept_data = {{ cellcept| safe}};
+    let imuran_data = {{ imuran| safe}};
+    let prograf_data = {{ prograf| safe}};
+
+
+    var medicine_chart = echarts.init(dom, null, {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+
+    var app = {};
+
+    var option;
+
+    option = {
+        legend: {},
+        toolbox: {
+            feature: {
+                dataView: {
+                    optionToContent: function (opt) {
+                        var axisData = opt.xAxis[0].data;
+                        var series = opt.series;
+                        var tdHeads = '<th>日期</th>';
+                        series.forEach(function (item) {
+                            tdHeads += '<th>' + item.name + '</th>';
+                        });
+                        var table = '<table class="table table-hover">' + '<thead>' + tdHeads + '</thead><tbody>';
+                        var tdBodys = '';
+                        for (var i = 0, l = axisData.length; i < l; i++) {
+                            for (var j = 0; j < series.length; j++) {
+                                if (typeof (series[j].data[i]) == 'object') {
+                                    tdBodys += '<td>' + series[j].data[i].value + '</td>';
+                                } else {
+                                    tdBodys += '<td>' + series[j].data[i] + '</td>';
+                                }
+                            }
+                            table += '<tr><td>' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                            tdBodys = '';
+                        }
+                        table += '</tbody></table>';
+                        return table;
+                    }
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        // dataset: {
+        //     source: [
+        //         medicine_dates,
+        //         pyridostigmine_data,
+        //         compesolone_data,
+        //         cellcept_data,
+        //         imuran_data,
+        //         prograf_data
+        //     ]
+        // },
+        xAxis: {
+            type: 'category',
+            data: medicine_dates
+        },
+        yAxis: {
+            type: 'value'
+        },
+        // Declare several bar series, each will be mapped
+        // to a column of dataset.source by default.
+        series: [
+            {
+                name: '大力丸(Pyridostigmine)',
+                type: 'bar',
+                data: pyridostigmine_data,
+                label: {
+                    show: true,
+                    position: 'inside',
+                    textStyle: { fontSize: 18 }
+                },
+
+            },
+            {
+                name: '類固醇(Compesolone)',
+                type: 'bar',
+                data: compesolone_data,
+                label: {
+                    show: true,
+                    position: 'inside',
+                    textStyle: { fontSize: 18 }
+                },
+
+            },
+            {
+                name: '山喜多(Cellcept)',
+                type: 'bar',
+                data: cellcept_data,
+                label: {
+                    show: true,
+                    position: 'inside',
+                    textStyle: { fontSize: 18 }
+                },
+
+            },
+            {
+                name: '移護寧(Imuran)',
+                type: 'bar',
+                data: imuran_data,
+                label: {
+                    show: true,
+                    position: 'inside',
+                    textStyle: { fontSize: 18 }
+                },
+
+            },
+            {
+                name: '普洛可富(Prograf)',
+                type: 'bar',
+                data: prograf_data,
+                label: {
+                    show: true,
+                    position: 'inside',
+                    textStyle: { fontSize: 18 }
+                },
+
+            },
+
+        ],
+
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 40,
+                end: 100
+            },
+            {
+                start: 40,
+                end: 100
+            }
+        ],
+    };
+
+    if (option && typeof option === 'object') {
+        medicine_chart.setOption(option);
+    }
+
+    window.addEventListener('resize', medicine_chart.resize);
+</script>
+
+
+
+<script>
+    var dom = document.getElementById('qol_fig');
+    var myChart = echarts.init(dom, null, {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+    let qol_dates = {{ all_qol_dates| safe}};
+    let qol_data = {{ qol_sum| safe}};
+
+    var option;
+
+
+
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            position: function (pt) {
+                return [pt[0], '10%'];
+            }
+        },
+        title: {
+            left: 'center',
+            text: '生活品質量表(QOL)總分變化'
+        },
+        toolbox: {
+            feature: {
+                dataView: {
+                    optionToContent: function (opt) {
+                        var axisData = opt.xAxis[0].data;
+                        var series = opt.series;
+                        var tdHeads = '<th>日期</th>';
+                        series.forEach(function (item) {
+                            tdHeads += '<th>' + item.name + '</th>';
+                        });
+                        var table = '<table class="table table-hover">' + '<thead>' + tdHeads + '</thead><tbody>';
+                        var tdBodys = '';
+                        for (var i = 0, l = axisData.length; i < l; i++) {
+                            for (var j = 0; j < series.length; j++) {
+                                if (typeof (series[j].data[i]) == 'object') {
+                                    tdBodys += '<td>' + series[j].data[i].value + '</td>';
+                                } else {
+                                    tdBodys += '<td>' + series[j].data[i] + '</td>';
+                                }
+                            }
+                            table += '<tr><td>' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                            tdBodys = '';
+                        }
+                        table += '</tbody></table>';
+                        return table;
+                    }
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: qol_dates
+        },
+        yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%']
+        },
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 40,
+                end: 100
+            },
+            {
+                start: 40,
+                end: 100
+            }
+        ],
+        series: [
+            {
+                name: '總分',
+                type: 'line',
+                smooth: true,
+                // symbol: 'none',
+                areaStyle: {},
+                label: {
+                    show: true,
+                    position: 'bottom',
+                    textStyle: { fontSize: 30 }
+                },
+                data: qol_data
+            }
+        ]
+    };
+
+    if (option && typeof option === 'object') {
+        myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+</script>
+
+
+
+
+<script>
+    var dom = document.getElementById('qmg_fig');
+    var qmg_chart = echarts.init(dom, null, {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+    let qmg_dates = {{ all_qmg_dates| safe}};
+    let qmg_data = {{ qmg_sum| safe}};
+
+    var option;
+
+
+
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            position: function (pt) {
+                return [pt[0], '10%'];
+            }
+        },
+        title: {
+            left: 'center',
+            text: 'QMG Score量表總分變化'
+        },
+        toolbox: {
+            feature: {
+                dataView: {
+                    optionToContent: function (opt) {
+                        var axisData = opt.xAxis[0].data;
+                        var series = opt.series;
+                        var tdHeads = '<th>日期</th>';
+                        series.forEach(function (item) {
+                            tdHeads += '<th>' + item.name + '</th>';
+                        });
+                        var table = '<table class="table table-hover">' + '<thead>' + tdHeads + '</thead><tbody>';
+                        var tdBodys = '';
+                        for (var i = 0, l = axisData.length; i < l; i++) {
+                            for (var j = 0; j < series.length; j++) {
+                                if (typeof (series[j].data[i]) == 'object') {
+                                    tdBodys += '<td>' + series[j].data[i].value + '</td>';
+                                } else {
+                                    tdBodys += '<td>' + series[j].data[i] + '</td>';
+                                }
+                            }
+                            table += '<tr><td>' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                            tdBodys = '';
+                        }
+                        table += '</tbody></table>';
+                        return table;
+                    }
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: qmg_dates
+        },
+        yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%']
+        },
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 40,
+                end: 100
+            },
+            {
+                start: 40,
+                end: 100
+            }
+        ],
+        series: [
+            {
+                name: '總分',
+                type: 'line',
+                smooth: true,
+                // symbol: 'none',
+                areaStyle: {},
+                label: {
+                    show: true,
+                    position: 'bottom',
+                    textStyle: { fontSize: 30 }
+                },
+                data: qmg_data
+            }
+        ]
+    };
+
+    if (option && typeof option === 'object') {
+        qmg_chart.setOption(option);
+    }
+
+    window.addEventListener('resize', qmg_chart.resize);
+</script>
+
+
+
+
+<script>
+    var dom = document.getElementById('mg_composite_fig');
+    var mg_composite_chart = echarts.init(dom, null, {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+    let mg_composite_dates = {{ all_mg_composite_dates| safe}};
+    let mg_composite_data = {{ mg_composite_sum| safe}};
+
+    var option;
+
+
+
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            position: function (pt) {
+                return [pt[0], '10%'];
+            }
+        },
+        title: {
+            left: 'center',
+            text: 'MG Composite量表總分變化'
+        },
+        toolbox: {
+            feature: {
+                dataView: {
+                    optionToContent: function (opt) {
+                        var axisData = opt.xAxis[0].data;
+                        var series = opt.series;
+                        var tdHeads = '<th>日期</th>';
+                        series.forEach(function (item) {
+                            tdHeads += '<th>' + item.name + '</th>';
+                        });
+                        var table = '<table class="table table-hover">' + '<thead>' + tdHeads + '</thead><tbody>';
+                        var tdBodys = '';
+                        for (var i = 0, l = axisData.length; i < l; i++) {
+                            for (var j = 0; j < series.length; j++) {
+                                if (typeof (series[j].data[i]) == 'object') {
+                                    tdBodys += '<td>' + series[j].data[i].value + '</td>';
+                                } else {
+                                    tdBodys += '<td>' + series[j].data[i] + '</td>';
+                                }
+                            }
+                            table += '<tr><td>' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                            tdBodys = '';
+                        }
+                        table += '</tbody></table>';
+                        return table;
+                    }
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: mg_composite_dates
+        },
+        yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%']
+        },
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 40,
+                end: 100
+            },
+            {
+                start: 40,
+                end: 100
+            }
+        ],
+        series: [
+            {
+                name: '總分',
+                type: 'line',
+                smooth: true,
+                // symbol: 'none',
+                areaStyle: {},
+                label: {
+                    show: true,
+                    position: 'bottom',
+                    textStyle: { fontSize: 30 }
+                },
+                data: mg_composite_data
+            }
+        ]
+    };
+
+    if (option && typeof option === 'object') {
+        mg_composite_chart.setOption(option);
+    }
+
+    window.addEventListener('resize', mg_composite_chart.resize);
+</script>
+
+
+<script>
+    var dom = document.getElementById('adl_fig');
+    var adl_chart = echarts.init(dom, null, {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+    let adl_dates = {{ all_adl_dates| safe}};
+    let adl_data = {{ adl_sum| safe}};
+
+    var option;
+
+
+
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            position: function (pt) {
+                return [pt[0], '10%'];
+            }
+        },
+        title: {
+            left: 'center',
+            text: '日常生活量表(ADL)總分變化'
+        },
+        toolbox: {
+            feature: {
+                dataView: {
+                    optionToContent: function (opt) {
+                        var axisData = opt.xAxis[0].data;
+                        var series = opt.series;
+                        var tdHeads = '<th>日期</th>';
+                        series.forEach(function (item) {
+                            tdHeads += '<th>' + item.name + '</th>';
+                        });
+                        var table = '<table class="table table-hover">' + '<thead>' + tdHeads + '</thead><tbody>';
+                        var tdBodys = '';
+                        for (var i = 0, l = axisData.length; i < l; i++) {
+                            for (var j = 0; j < series.length; j++) {
+                                if (typeof (series[j].data[i]) == 'object') {
+                                    tdBodys += '<td>' + series[j].data[i].value + '</td>';
+                                } else {
+                                    tdBodys += '<td>' + series[j].data[i] + '</td>';
+                                }
+                            }
+                            table += '<tr><td>' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                            tdBodys = '';
+                        }
+                        table += '</tbody></table>';
+                        return table;
+                    }
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: adl_dates
+        },
+        yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%']
+        },
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 40,
+                end: 100
+            },
+            {
+                start: 40,
+                end: 100
+            }
+        ],
+        series: [
+            {
+                name: '總分',
+                type: 'line',
+                smooth: true,
+                // symbol: 'none',
+                areaStyle: {},
+                label: {
+                    show: true,
+                    position: 'bottom',
+                    textStyle: { fontSize: 30 }
+                },
+                data: adl_data
+            }
+        ]
+    };
+
+    if (option && typeof option === 'object') {
+        adl_chart.setOption(option);
+    }
+
+    window.addEventListener('resize', adl_chart.resize);
+</script>
+

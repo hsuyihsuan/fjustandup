@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/echarts.js') }}"></script>
+</head>
+
+<body>
+    <div id="UricAcid_fig" class="basic mt-3" style="height: 90vh"></div>
+
+
+    <script>
+        var dom = document.getElementById('UricAcid_fig');
+        var UricAcid_chart = echarts.init(dom, null, {
+            renderer: 'canvas',
+            useDirtyRect: false
+        });
+        var app = {};
+
+        var option;
+
+        let blood_test_dates = {{ all_blood_test_dates| safe}};
+        let UricAcid_data = {{ UricAcid| safe}};
+
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                position: function (pt) {
+                    return [pt[0], '10%'];
+                }
+            },
+            title: {
+                left: 'center',
+                text: 'UricAcid階梯圖'
+            },
+            toolbox: {
+                feature: {
+
+                    dataView: {
+                        optionToContent: function (opt) {
+                            var axisData = opt.xAxis[0].data;
+                            var series = opt.series;
+                            var tdHeads = '<th>日期</th>';
+                            series.forEach(function (item) {
+                                tdHeads += '<th>' + item.name + '</th>';
+                            });
+                            var table = '<table class="table table-hover">' + '<thead>' + tdHeads + '</thead><tbody>';
+                            var tdBodys = '';
+                            for (var i = 0, l = axisData.length; i < l; i++) {
+                                for (var j = 0; j < series.length; j++) {
+                                    if (typeof (series[j].data[i]) == 'object') {
+                                        tdBodys += '<td>' + series[j].data[i].value + '</td>';
+                                    } else {
+                                        tdBodys += '<td>' + series[j].data[i] + '</td>';
+                                    }
+                                }
+                                table += '<tr><td>' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                tdBodys = '';
+                            }
+                            table += '</tbody></table>';
+                            return table;
+                        }
+                    },
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            legend: {
+                left: 10,
+                data: ['UricAcid']
+
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: blood_test_dates
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%']
+            },
+            dataZoom: [
+                {
+                    type: 'inside',
+                    start: 40,
+                    end: 100
+                },
+                {
+                    start: 40,
+                    end: 100
+                }
+            ],
+            series: [
+                {
+                    name: 'UricAcid',
+                    type: 'line',
+                    sampling: 'lttb',
+                    step: 'middle',
+                    itemStyle: {
+                        color: 'orange'
+                    },
+                    label: {
+                        show: true,
+                        position: 'bottom',
+                        textStyle: { fontSize: 15 }
+
+                    },
+
+                    data: UricAcid_data
+                }
+          
+            ]
+        };
+
+        if (option && typeof option === 'object') {
+            UricAcid_chart.setOption(option);
+        }
+
+        window.addEventListener('resize', UricAcid_chart.resize);
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<div hx-target="this" hx-swap="outerHTML">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between">
+            <h4><b>病歷基本資料</b></h4>
+            <!-- <button hx-get="/updatePatient/{{patient.PK_PatientID}}" class="btn btn-primary">編輯</button> -->
+        </div>
+        <div class="row mt-2">
+            <div class="col">
+                <label for="patient_id"
+                    class="col-form-label d-flex justify-content-center">病歷號碼</label>
+            </div>
+            <div class="col">
+                <input type="text" name="patient_id" class="form-control text-center"
+                    id="patient_id" value="{{patient.PK_PatientID}}">
+            </div>
+            <div class="col">
+                <label for="patinet_name"
+                    class="col-form-label d-flex justify-content-center">姓名</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="patient_name"
+                    value="{{patient.PatientName}}" readonly>
+            </div>
+            <div class="col">
+                <label for="patient_sex"
+                    class="col-form-label d-flex justify-content-center">性別</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="patient_sex"
+                    value="{% if patient.PatientSex %} 男 {% else %} 女 {% endif %}" readonly>
+            </div>
+        </div>
+
+    </div>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <label for="patient_birth"
+                    class="col-form-label d-flex justify-content-center">出生日期</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="patient_birth"
+                    value="{{patient.PatientBirth}}" readonly>
+            </div>
+            <div class="col">
+                <label for="patient_age"
+                    class="col-form-label d-flex justify-content-center">年紀</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="patient_age"
+                    value="{{patient_age}}歲" readonly>
+            </div>
+            <div class="col">
+                <label for="begin_symptom"
+                    class="col-form-label d-flex justify-content-center">初始症狀
+                    </dlabel>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="begin_symtom"
+                    value="{% if patient.BeginSymptom == 0 %} 眼肌型 {% elif patient.BeginSymptom == 1 %} 口咽型 {% else %} 四肢型 {% endif %}"
+                    readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <h4><b>發病相關資料</b></h4>
+        <div class="row mt-2">
+            <div class="col">
+                <label for="attack_date"
+                    class="col-form-label d-flex justify-content-center">發病日期</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="attack_date"
+                    value="{{patient.AttackDate}}" readonly>
+            </div>
+            <div class="col">
+                <label for="age_of_onset"
+                    class="col-form-label d-flex justify-content-center">發病年紀</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="age_of_onset"
+                    value="{{age_of_onset}}歲" readonly>
+            </div>
+            <div class="col">
+                <label for="days_of_onset"
+                    class="col-form-label d-flex justify-content-center">發病時長
+                    </dlabel>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="days_of_onset"
+                    value="{{days_of_onset}} 天" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <label for="in_hospital_date" class="col-form-label">最近本院住院日期</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="in_hospital_date"
+                    value="{% if in_hospital_date %} {{in_hospital_date}} {% else %} 尚無紀錄 {% endif %}" readonly>
+            </div>
+            <div class="col">
+                <label for="in_hospital_count" class="col-form-label">本院住院總次數</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="in_hospital_count"
+                    value="{{in_hospital_count}}">
+            </div>
+            <div class="col"></div>
+            <div class="col"></div>
+        </div>
+    </div>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <label for="in_other_hospital_date" class="col-form-label">最近外院住院日期</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="in_other_hospital_date"
+                    value="{% if patient.InOtherHospitalDate.strftime("%Y-%m-%d") != '0001-01-01' %} {{patient.InOtherHospitalDate}} {% else %} 尚無紀錄 {% endif %}" readonly>
+            </div>
+            <div class="col">
+                <label for="in_other_hospital_count" class="col-form-label">外院住院總次數</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="in_other_hospital_count"
+                    value="{{patient.InOtherHospitalCount}}">
+            </div>
+            <div class="col"></div>
+            <div class="col"></div>
+        </div>
+    </div>
+</div>

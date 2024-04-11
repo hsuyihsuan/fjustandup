@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>註冊帳號</title>
+    <script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/_hyperscript.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="row mb-3">
+        &emsp;
+    </div>
+
+    <form method="post" action="/signup">
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col">
+                    <h1 class="text-center"><strong>帳號註冊</strong></h1>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-3">
+                <div class="col-1">職稱</div>
+                <div class="col-1 text-center">
+                    <input class="form-check-input" type="radio" name="Job" id="doctor" value="doctor" hx-get="/jobName"
+                        hx-target="#job_name" hx-swap="outherHTML" checked>
+                    <label class="form-check-label" for="doctor">
+                        醫師
+                    </label>
+                </div>
+                <div class="col-2 text-center">
+                    <input class="form-check-input" type="radio" name="Job" id="nurse" value="nurse" hx-get="/jobName"
+                        hx-target="#job_name" hx-swap="outherHTML">
+                    <label class="form-check-label" for="nurse">
+                        護理師
+                    </label>
+                </div>
+                <div class="col-1 text-center">
+                    <input class="form-check-input" id="other" type="radio" hx-get="/jobName" hx-target="#job_name"
+                        name="Job" id="other" value="other" hx-swap="outherHTML">
+                    <label class="form-check-label" for="other">
+                        其他
+                    </label>
+                </div>
+            </div>
+            <div class="row justify-content-center" id="job_name"></div>
+            <div class="row justify-content-center mt-3">
+                <div class="col-1">
+                    <label for="account_name" class="col-form-label">帳號</label>
+                </div>
+                <div class="col-4">
+                    <input type="text" min="3" max="20" name="AccountName" class="form-control" id="account_name"
+                    required>
+                </div>
+
+            </div>
+            <div class="row justify-content-center mt-3">
+                <div class="col-1">
+                    <label for="password" class="col-form-label">密碼</label>
+                </div>
+                <div class="col-4">
+                    <input type="password" name="Password" class="form-control" id="password" required>
+                </div>
+
+            </div>
+            <div class="row justify-content-center mt-3">
+                <div class="col-1">
+                    <label for="email" class="col-form-label">Email</label>
+                </div>
+                <div class="col-4">
+                    <input type="email" min="3" max="30" name="Email" class="form-control" id="email" required>
+                </div>
+
+            </div>
+            <div class="row justify-content-center mt-3">
+                <div class="col-1">
+                    <label for="name" class="col-form-label">姓名</label>
+                </div>
+                <div class="col-4">
+                    <input type="text" min="1" max="25" name="UserName" class="form-control" id="name" required>
+                </div>
+
+            </div>
+            <div class="row mb-3">
+                <div class="row justify-content-center mt-3">
+                    <div class="col-2"></div>
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-primary">註冊</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center my-3">
+                <div class="col-2"></div>
+                <div class="col-3">
+                    <a href="/login" class="text-center">已有帳號? 點此登入</a>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+
+
+</body>
+
+</html>

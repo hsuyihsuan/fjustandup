@@ -1,0 +1,61 @@
+<form hx-put="/updateMedicine/{{patient_id}}/{{visit.VisitDate}}" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+    <input type="hidden" name="PK_VisitID" value="{{visit.PK_VisitID}}">
+    <div hx-target="this" hx-swap="outerHTML">
+        <div class="container mt-3">
+            <div class="d-flex justify-content-between">
+                <h4><b>修改常見用藥和頻率</b></h4>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <label for="pyridostigmine" class="col-form-label">大力丸(Pyridostigmine)</label>
+                </div>
+                <div class="col">
+                    <input type="number" name="Pyridostigmine" class="form-control text-center" id="pyridostigmine" min="0" max="9"
+                        value="{{visit.Pyridostigmine}}">
+                </div>
+                <div class="col">
+                    <label for="compesolone" class="col-form-label">類固醇(Compesolone)</label>
+                </div>
+                <div class="col">
+                    <input type="number" name="Compesolone" class="form-control text-center" id="compesolone" min="0" max="9"
+                        value="{{visit.Compesolone}}">
+                </div>
+                <div class="col">
+                    <label for="cellcept" class="col-form-label">山喜多(Cellcept)</dlabel>
+                </div>
+                <div class="col">
+                    <input type="number" name="Cellcept" class="form-control text-center" id="cellcept" min="0" max="9"
+                        value="{{visit.Cellcept}}">
+                </div>
+            </div>
+        </div>
+        <div class="container mt-3 mb-2">
+            <div class="row">
+                <div class="col">
+                    <label for="imuran" class="col-form-label">移護寧(Imuran)</label>
+                </div>
+                <div class="col">
+                    <input type="number" name="Imuran" class="form-control text-center" id="imuran" min="0" max="9"
+                        value="{{visit.Imuran}}">
+                </div>
+                <div class="col">
+                    <label for="prograf" class="col-form-label">普洛可富(Prograf)</label>
+                </div>
+                <div class="col">
+                    <input type="number" name="Prograf" class="form-control text-center" id="prograf" min="0" max="9"
+                        value="{{visit.Prograf}}">
+                </div>
+                <div class="col">
+                </div>
+                <div class="col">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">完成</button>
+        <button type="submit" class="btn btn-danger ms-2"
+            hx-get="/returnWatchVisitMedicine/{{patient_id}}/{{visit.VisitDate}}">取消</button>
+
+
+    </div>
+</form>

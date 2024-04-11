@@ -1,0 +1,406 @@
+<!-- <form hx-put="/updateBasicVisit/{{patient_id}}/{{visit.VisitDate}}" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+    <input type="hidden" name="PK_VisitID" value="{{visit.PK_VisitID}}">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between">
+            <h4><b>修改就診基本資料</b></h4>
+          </div>
+          <div class="row justify-content-start mt-3">
+            <div class="col-3">
+                <label for="weight" class="form-label">就診狀態</label>
+            </div>
+            <div class="col-9">
+                <div class="form-check form-check-inline col-auto">
+                    <label for="plasmapheresis" class="form-label">看診</label>
+                    <input type="radio" name="Treat" id="plasmapheresis" class="form-check-input" value="0" {% if visit.Treat == 0 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline col-auto">
+                    <label for="plasmapheresis" class="form-label">PP</label>
+                    <input type="radio" name="Treat" id="plasmapheresis" class="form-check-input" value="1" {% if visit.Treat == 1 %} checked {% endif %}s>
+                </div>
+                <div class="form-check form-check-inline col-auto">
+                    <label for="intravenous_immunoglobulin" class="form-label">IVIG</label>
+                    <input type="radio" name="Treat" id="intravenous_immunoglobulin" class="form-check-input" value="2" {% if visit.Treat == 2 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline col-auto">
+                    <label for="rituximab" class="form-label">RTX</label>
+                    <input type="radio" name="Treat" id="rituximab" class="form-check-input" value="3" {% if visit.Treat == 3 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline col-auto">
+                    <label for="surgery" class="form-label">開刀</label>
+                    <input type="radio" name="Treat" id="surgery" class="form-check-input" value="4" {% if visit.Treat == 4 %} checked {% endif %}>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-start">
+            <div class="col-3">
+                MGFA臨床分類
+            </div>
+            <div class="col-9">
+                <div class="form-check form-check-inline">
+                    <label for="I" class="form-check-label">I</label>
+                    <input type="radio" name="MGFA_Classification" id="I" class="form-check-input" value="0" {% if
+                        visit.MGFA_Classification==0 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label for="IIA" class="form-check-label">IIA</label>
+                    <input type="radio" name="MGFA_Classification" id="IIA" class="form-check-input" value="1" {% if
+                        visit.MGFA_Classification==1 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label for="IIB" class="form-check-label">IIB</label>
+                    <input type="radio" name="MGFA_Classification" id="IIB" class="form-check-input" value="2" {% if
+                        visit.MGFA_Classification==2 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label for="IIIA" class="form-check-label">IIIA</label>
+                    <input type="radio" name="MGFA_Classification" id="IIIA" class="form-check-input" value="3" {% if
+                        visit.MGFA_Classification==3 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label for="IIIB" class="form-check-label">IIIB</label>
+                    <input type="radio" name="MGFA_Classification" id="IIIB" class="form-check-input" value="4" {% if
+                        visit.MGFA_Classification==4 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label for="IVA" class="form-check-label">IVA</label>
+                    <input type="radio" name="MGFA_Classification" id="IVA" class="form-check-input" value="5" {% if
+                        visit.MGFA_Classification==5 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label for="IVB" class="form-check-label">IVB</label>
+                    <input type="radio" name="MGFA_Classification" id="IVB" class="form-check-input" value="6" {% if
+                        visit.MGFA_Classification==6 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label for="V" class="form-check-label">V</label>
+                    <input type="radio" name="MGFA_Classification" id="V" class="form-check-input" value="7" {% if
+                        visit.MGFA_Classification==7 %} checked {% endif %}>
+                </div>
+            </div>
+
+         
+        </div>
+        
+        <div class="row  justify-content-start mt-3">
+            <div class="col-2">
+                <label for="height" class="form-label">身高</label>
+            </div>
+            <div class="col-2">
+                <input type="number" name="Height" class="form-control text-center" id="height" value="{{'{:.1f}'.format(visit.Height)}}"
+                min="50" max="220" step="0.1">
+            </div>
+            <div class="col-2">
+                <label for="weight" class="form-label">體重</label>
+            </div>
+            <div class="col-2">
+                <input type="number" name="Weight" class="form-control text-center" id="weight" value="{{'{:.1f}'.format(visit.Weight)}}"
+                min="5" max="160" step="0.1">
+            </div>
+
+
+        </div>
+        <div class="row justify-content-start">
+            <div class="col-2">
+                <label for="sbp" class="form-label">收縮壓</label>
+            </div>
+            <div class="col-2">
+                <input type="number" name="Sbp" id="sbp" class="form-control text-center" value="{% if visit.Sbp != -1 %}{{visit.Sbp}}{% else %}{% endif %}" in="30"
+                max="200">
+            </div>
+            <div class="col-2">
+                <label for="dbp" class="form-label">舒張壓</label>
+            </div>
+            <div class="col-2">
+                <input type="number" name="Dbp" id="sbp" class="form-control text-center" value="{% if visit.Dbp != -1 %}{{visit.Dbp}}{% else %}{% endif %}"  min="1"
+                max="140">
+            </div>
+        </div>
+        <div class="row justify-content-start my-3">
+            <div class="col-3">
+                現有症狀
+            </div>
+            <div class="col-9">
+                <div class="form-check form-check-inline">
+                    <input type="hidden" name="Ptosis" value="0">
+                    <input type="checkbox" name="Ptosis" id="ptosis" class="form-check-input" value="1" {%
+                        if visit.Ptosis %} checked {% endif %}>
+                    <label for="ptosis" class="form-check-label">
+                        眼瞼下垂
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="hidden" name="Diplopia" value="0">
+                    <input type="checkbox" name="Diplopia" id="diplopia" class="form-check-input" value="1"
+                        {% if visit.Diplopia %} checked {% endif %}>
+                    <label for="diplopia" class="form-check-label">
+                        複視
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="hidden" name="Dysphasia" value="0">
+                    <input type="checkbox" name="Dysphasia" id="dysphasia" class="form-check-input"
+                        value="1" {% if visit.Dysphasia %} checked {% endif %}>
+                    <label for="dysphasia" class="form-check-label">
+                        吞嚥困難
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="hidden" name="Dysarthria" value="0">
+                    <input type="checkbox" name="Dysarthria" id="dysarthria" class="form-check-input"
+                        value="1" {% if visit.Dysarthria %} checked {% endif %}>
+                    <label for="dysarthria" class="form-check-label">
+                        講話不清
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="hidden" name="Dyspnea" value="0">
+                    <input type="checkbox" name="Dyspnea" id="dyspnea" class="form-check-input" value="1" {%
+                        if visit.Dyspnea %} checked {% endif %}>
+                    <label for="dyspnea" class="form-check-label">
+                        呼吸困難
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="hidden" name="LimbWeakness" value="0">
+                    <input type="checkbox" name="LimbWeakness" id="limb_weakness" class="form-check-input"
+                        value="1" {% if visit.LimbWeakness %} checked {% endif %}>
+                    <label for="limb_weakness" class="form-check-label">
+                        手腳無力
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <button type="submit" class="btn btn-primary">完成</button>
+    <button type="submit" class="btn btn-danger"
+        hx-get="/returnWatchVisitBasicVisit/{{patient_id}}/{{visit.VisitDate}}">取消</button>
+</form> -->
+
+<div id="modal-backdrop3" class="modal-backdrop fade show" style="display:block;"></div>
+<div id="modal3" class="modal fade show" tabindex="-1" style="display:block;">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <form hx-put="/updateBasicVisit/{{patient_id}}/{{visit.VisitDate}}">
+                <div class="modal-header">
+                    <h4 class="modal-title"><strong>修改就診基本資料</strong></h4>
+                </div>
+                <div class="modal-body">
+
+                    <!--hx-target="this"  hx-swap="outerHTML"-->
+                    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+                    <input type="hidden" name="PK_VisitID" value="{{visit.PK_VisitID}}">
+                    <div class="container mt-3">
+                        <!-- <div class="d-flex justify-content-between">
+                            <h4><b>修改就診基本資料</b></h4>
+                        </div> -->
+                        <div class="row justify-content-start mt-3">
+                            <div class="col-3">
+                                <label for="weight" class="form-label">就診狀態</label>
+                            </div>
+                            <div class="col-9">
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="plasmapheresis" class="form-label">看診</label>
+                                    <input type="radio" name="Treat" id="plasmapheresis" class="form-check-input"
+                                        value="0" {% if visit.Treat==0 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="plasmapheresis" class="form-label">PP</label>
+                                    <input type="radio" name="Treat" id="plasmapheresis" class="form-check-input"
+                                        value="1" {% if visit.Treat==1 %} checked {% endif %}s>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="intravenous_immunoglobulin" class="form-label">IVIG</label>
+                                    <input type="radio" name="Treat" id="intravenous_immunoglobulin"
+                                        class="form-check-input" value="2" {% if visit.Treat==2 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="rituximab" class="form-label">RTX</label>
+                                    <input type="radio" name="Treat" id="rituximab" class="form-check-input" value="3"
+                                        {% if visit.Treat==3 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="surgery" class="form-label">開刀</label>
+                                    <input type="radio" name="Treat" id="surgery" class="form-check-input" value="4" {%
+                                        if visit.Treat==4 %} checked {% endif %}>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-start">
+                            <div class="col-3">
+                                MGFA臨床分類
+                            </div>
+                            <div class="col-9">
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="I" class="form-check-label">I</label>
+                                    <input type="radio" name="MGFA_Classification" id="I" class="form-check-input"
+                                        value="0" {% if visit.MGFA_Classification==0 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="IIA" class="form-check-label">IIA</label>
+                                    <input type="radio" name="MGFA_Classification" id="IIA" class="form-check-input"
+                                        value="1" {% if visit.MGFA_Classification==1 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="IIB" class="form-check-label">IIB</label>
+                                    <input type="radio" name="MGFA_Classification" id="IIB" class="form-check-input"
+                                        value="2" {% if visit.MGFA_Classification==2 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="IIIA" class="form-check-label">IIIA</label>
+                                    <input type="radio" name="MGFA_Classification" id="IIIA" class="form-check-input"
+                                        value="3" {% if visit.MGFA_Classification==3 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="IIIB" class="form-check-label">IIIB</label>
+                                    <input type="radio" name="MGFA_Classification" id="IIIB" class="form-check-input"
+                                        value="4" {% if visit.MGFA_Classification==4 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="IVA" class="form-check-label">IVA</label>
+                                    <input type="radio" name="MGFA_Classification" id="IVA" class="form-check-input"
+                                        value="5" {% if visit.MGFA_Classification==5 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="IVB" class="form-check-label">IVB</label>
+                                    <input type="radio" name="MGFA_Classification" id="IVB" class="form-check-input"
+                                        value="6" {% if visit.MGFA_Classification==6 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="V" class="form-check-label">V</label>
+                                    <input type="radio" name="MGFA_Classification" id="V" class="form-check-input"
+                                        value="7" {% if visit.MGFA_Classification==7 %} checked {% endif %}>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row  justify-content-start mt-3">
+                            <div class="col-2">
+                                <label for="height" class="form-label">身高</label>
+                            </div>
+                            <div class="col-2">
+                                <input type="number" name="Height" class="form-control text-center" id="height"
+                                    value="{{'{:.1f}'.format(visit.Height)}}" min="50" max="220" step="0.1">
+                            </div>
+                            <div class="col-2">
+                                <label for="weight" class="form-label">體重</label>
+                            </div>
+                            <div class="col-2">
+                                <input type="number" name="Weight" class="form-control text-center" id="weight"
+                                    value="{{'{:.1f}'.format(visit.Weight)}}" min="5" max="160" step="0.1">
+                            </div>
+
+
+                        </div>
+                        <div class="row justify-content-start">
+                            <div class="col-2">
+                                <label for="sbp" class="form-label">收縮壓</label>
+                            </div>
+                            <div class="col-2">
+                                <input type="number" name="Sbp" id="sbp" class="form-control text-center"
+                                    value="{% if visit.Sbp != -1 %}{{visit.Sbp}}{% else %}{% endif %}" in="30"
+                                    max="200">
+                            </div>
+                            <div class="col-2">
+                                <label for="dbp" class="form-label">舒張壓</label>
+                            </div>
+                            <div class="col-2">
+                                <input type="number" name="Dbp" id="sbp" class="form-control text-center"
+                                    value="{% if visit.Dbp != -1 %}{{visit.Dbp}}{% else %}{% endif %}" min="1"
+                                    max="140">
+                            </div>
+                        </div>
+                        <div class="row justify-content-start my-3">
+                            <div class="col-2">
+                                現有症狀
+                            </div>
+                            <div class="col-10">
+                                <div class="form-check form-check-inline col-1">
+                                    <input type="hidden" name="Ptosis" value="0">
+                                    <input type="checkbox" name="Ptosis" id="ptosis" class="form-check-input" value="1"
+                                        {% if visit.Ptosis %} checked {% endif %}>
+                                    <label for="ptosis" class="form-check-label">
+                                        眼瞼下垂
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline col-1 ms-3">
+                                    <input type="hidden" name="Diplopia" value="0">
+                                    <input type="checkbox" name="Diplopia" id="diplopia" class="form-check-input"
+                                        value="1" {% if visit.Diplopia %} checked {% endif %}>
+                                    <label for="diplopia" class="form-check-label">
+                                        複視
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <input type="hidden" name="Dysphasia" value="0">
+                                    <input type="checkbox" name="Dysphasia" id="dysphasia" class="form-check-input"
+                                        value="1" {% if visit.Dysphasia %} checked {% endif %}>
+                                    <label for="dysphasia" class="form-check-label">
+                                        吞嚥困難
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <input type="hidden" name="Dysarthria" value="0">
+                                    <input type="checkbox" name="Dysarthria" id="dysarthria" class="form-check-input"
+                                        value="1" {% if visit.Dysarthria %} checked {% endif %}>
+                                    <label for="dysarthria" class="form-check-label">
+                                        講話不清
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <input type="hidden" name="Dyspnea" value="0">
+                                    <input type="checkbox" name="Dyspnea" id="dyspnea" class="form-check-input"
+                                        value="1" {% if visit.Dyspnea %} checked {% endif %}>
+                                    <label for="dyspnea" class="form-check-label">
+                                        呼吸困難
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <input type="hidden" name="LimbWeakness" value="0">
+                                    <input type="checkbox" name="LimbWeakness" id="limb_weakness"
+                                        class="form-check-input" value="1" {% if visit.LimbWeakness %} checked {% endif
+                                        %}>
+                                    <label for="limb_weakness" class="form-check-label">
+                                        手腳無力
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-start my-3">
+                            <div class="col-9">
+                                <input type="hidden" name="RecordType" value="修改">
+                                <input type="hidden" name="Content" value="就診基本資料">
+                                <textarea name="Reason" class="form-control" id="basic_visit_update_reason" rows="5" cols="30"
+                                    required placeholder="請輸入修改原因(必填)，否則無法送出" onkeyup="success()"></textarea>
+                                <div class="invalid-feedback">請輸入修改原因</div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <!-- <button type="submit" class="btn btn-danger"
+                        hx-get="/returnWatchVisitBasicVisit/{{patient_id}}/{{visit.VisitDate}}">取消</button> -->
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal3()">關閉</button>
+                    <button type="submit" class="btn btn-primary basic_visit" id="basic_visit_button" disabled>完成修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function success() {
+            if (document.getElementById("basic_visit_update_reason").value === "") {
+                document.getElementById('basic_visit_button').disabled = true;
+            } else {
+                document.getElementById('basic_visit_button').disabled = false;
+            }
+        }
+    </script>
+</div>

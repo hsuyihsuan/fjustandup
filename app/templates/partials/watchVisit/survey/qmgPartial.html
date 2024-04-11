@@ -1,0 +1,87 @@
+{% if update %}
+<form hx-put="/updateQMG/{{patient_id}}/{{qmg_date}}" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+    <input type="hidden" name="PK_QMGTableID" value="{{qmg_id}}">
+{% endif %}
+    <table class="table table-hover mt-3">
+        <thead style="position: sticky; top: 0; background-color: white;">
+            <th class="col-2">&nbsp;</th>
+            <th>0</th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+        </thead>
+        <tbody>
+            {% for i in (
+            ('1.複視', 'qmg_double_vision', 'QMG_DoubleVision', '61 sec', '11~60 sec', '1~10 sec', 'Spontaeous'),
+            ('2.眼瞼下垂', 'qmg_ptosis', 'QMG_Ptosis', '61 sec', '11~60 sec', '1~10 sec', 'Spontaeous'),
+            ('3.臉部無力', 'qmg_facial_muscle', 'QMG_FacialMuscle', 'Normal lid', 'Complete, weak, some resistance',
+            'Complete, without resistance', 'Incomplete'),
+            ('4.吞嚥困難', 'qmg_swallowing', 'QMG_Swallowing', 'Normal', 'Minimal coughing or throat clearing', 'Severe
+            coughing/choking or nasal regurgitation', 'Cannot swallow(test not attemped)'),
+            ('5.說話流暢度', 'qmg_speech', 'QMG_Speech', 'None at 50', 'Dysarthria at 30~49', 'Dysarthria at 10~29',
+            'Dysarthria at 9'),
+            ('6.右手舉高程度', 'qmg_right_arm', 'QMG_RightArm', '240 sec', '90~239 sec', '10~89 sec', '0~9 sec'),
+            ('7.左手舉高程度', 'qmg_left_arm', 'QMG_LeftArm', '240 sec', '90~239 sec', '10~89 sec', '0~9 sec'),
+            ('8.肺活量', 'qmg_vital_capacity', 'QMG_VitalCapacity', '>=80%', '65~79%', '50~64%', "<50%"),
+                ('9.右手握力(kg)', 'qmg_right_hand_grip' , 'QMG_RightHandGrip' , '>=45(男), >=30(女)' , '15~44(男), 10~29(女)'
+                , '5~14(男), 5~9(女)' , '0~4(男, 女)' ), ('10.左手握力(kg)', 'qmg_left_hand_grip' , "QMG_LeftHandGrip"
+                , '>=35(男), >=25(女)', '15~34(男),  10~24(女)' , '5~14(男), 5~9(女)' , '0~4(男, 女)' ),
+                ('11.頭抬高程度', 'qmg_head_lifted' , 'QMG_HeadLifted' , '120 sec' , '30~119 sec' , '1~29 sec' , '0 sec' ),
+                ('12.右腳舉高', 'qmg_right_leg' , 'QMG_RightLeg' , '100 sec' , '31~99 sec' , '1~30 sec' , '0 sec' ),
+                ('13.左腳舉高', 'qmg_left_leg' , 'QMG_LeftLeg' , '100 sec' , '31~99 sec' , '1~30 sec' , '0 sec' ) ) %} <tr>
+                <td>
+                    {{i[0]}}
+                </td>
+                {% for j in (0, 1, 2, 3) %}
+                <td>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" name="{{i[2]}}" id="{{i[1]}}" class="form-check-input qmg_score"
+                        value="{{j}}" {% if qmg %} 
+                                            {% if qmg[i[2]]==j %} 
+                                                checked 
+                                            {% elif update %}
+                                            {% elif watch %} 
+                                                disabled 
+                                            {% endif%} 
+                                      {% else %} 
+                                            {% if j==0 %} 
+                                                checked 
+                                            {% endif %} 
+                                      {% endif %} 
+                            onchange="QMGTotal()">
+                        <label for="{{i[1]}}" class="form-check-label" style="font-size: 0.8rem;">{{i[3+j]}}</label>
+                       
+                    </div>
+                </td>
+                {% endfor %}
+                </tr>
+                {% endfor %}
+
+        </tbody>
+    </table>
+    <div class="row justify-content-between">
+        {% if qmg and not watch%}
+        <div class="col-4">
+            <label for="last_time_qmg_score" class="form-label">上次總分 {% if qmg_date %} ({{qmg_date}}) {% endif
+                %}</label>
+            <input type="number" id="last_time_qmg_score" class="form-control text-center" readonly
+                value="{{ qmg.values() | sum }}">
+        </div>
+        {% endif %}
+        <div class="col-4">
+            <label for="qmg_score" class="form-label">本次總分</label>
+            <input type="number" name="QMG_Sum" id="qmg_score" class="form-control text-center" readonly
+                value="{{ qmg.values() | sum }}">
+        </div>
+
+
+    </div>
+
+{% if update %}
+    <button type="submit" class="btn btn-primary mt-3">完成</button>
+    <button type="submit" class="btn btn-danger mt-3 ms-2"
+        hx-get="/returnWatchVisitQMG/{{patient_id}}/{{qmg_date}}">取消</button>
+   
+</form>
+{% endif %}

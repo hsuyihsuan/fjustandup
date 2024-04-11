@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/echarts.js') }}"></script>
+</head>
+<body>
+    <div id="height_and_weight" class="basic mt-3" style="height: 90vh"></div>
+
+    
+<script>
+    var dom = document.getElementById('height_and_weight');
+    var height_and_weight_chart = echarts.init(dom, null, {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+    var app = {};
+
+    var option;
+
+    // let oneDay = 24 * 3600 * 1000;
+    let date = {{ all_visit_date_asc| safe}};
+    let height_data = {{ height| safe}};
+    let weight_data = {{ weight| safe}};
+    // let data = [Math.random() * 300];
+    // for (let i = 1; i < 20000; i++) {
+    //     var now = new Date((base += oneDay));
+    //     date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
+    //     data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
+    // }
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            position: function (pt) {
+                return [pt[0], '10%'];
+            }
+        },
+        title: {
+            left: 'center',
+            text: '身高、體重折線圖'
+        },
+        toolbox: {
+            feature: {
+                // dataZoom: {
+                //     yAxisIndex: 'none'
+                // },
+                dataView: {
+                    optionToContent: function (opt) {
+                        var axisData = opt.xAxis[0].data;
+                        var series = opt.series;
+                        var tdHeads = '<th>日期</th>';
+                        series.forEach(function (item) {
+                            tdHeads += '<th>' + item.name + '</th>';
+                        });
+                        var table = '<table class="table table-hover">'+'<thead>'+tdHeads+'</thead><tbody>';
+                        var tdBodys = '';
+                        for (var i = 0, l = axisData.length; i < l; i++) {
+                            for (var j = 0; j < series.length; j++) {
+                                if (typeof (series[j].data[i]) == 'object') {
+                                    tdBodys += '<td>' + series[j].data[i].value + '</td>';
+                                } else {
+                                    tdBodys += '<td>' + series[j].data[i] + '</td>';
+                                }
+                            }
+                            table += '<tr><td>' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                            tdBodys = '';
+                        }
+                        table += '</tbody></table>';
+                        return table;
+                    }
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        legend: {
+            left: 10,
+            data: ['身高', '體重']
+
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: date
+        },
+        yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%']
+        },
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 40,
+                end: 100
+            },
+            {
+                start: 40,
+                end: 100
+            }
+        ],
+        series: [
+            {
+                name: '身高',
+                type: 'line',
+                // symbol: 'none',
+                sampling: 'lttb',
+                // itemStyle: {
+                //     color: 'steelblue'
+                // },
+                label: {
+                    show: true,
+                    position: 'bottom',
+                    textStyle: { fontSize: 15 }
+                },
+                // areaStyle: {
+                //     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                //         {
+                //             offset: 0,
+                //             color: 'rgb(255, 158, 68)'
+                //         },
+                //         {
+                //             offset: 1,
+                //             color: 'rgb(255, 70, 131)'
+                //         }
+                //     ])
+                // },
+                data: height_data
+            },
+            {
+                name: '體重',
+                type: 'line',
+                // symbol: 'none',
+                sampling: 'lttb',
+                // itemStyle: {
+                //     color: 'darkgreen'
+                // },
+                label: {
+                    show: true,
+                    position: 'bottom',
+                    textStyle: { fontSize: 15 }
+                },
+                // areaStyle: {
+                //     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                //         {
+                //             offset: 0,
+                //             color: 'rgb(255, 158, 68)'
+                //         },
+                //         {
+                //             offset: 1,
+                //             color: 'rgb(255, 70, 131)'
+                //         }
+                //     ])
+                // },
+                data: weight_data
+            }
+        ]
+    };
+
+    if (option && typeof option === 'object') {
+        height_and_weight_chart.setOption(option);
+    }
+
+    window.addEventListener('resize', height_and_weight_chart.resize);
+</script>
+
+
+</body>
+</html>
+
+

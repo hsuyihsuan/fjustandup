@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>帳號管理</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+  <script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+  <script src="{{ url_for('static', path='/assets/javascript/_hyperscript.min.js') }}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', path='/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', path='/assets/DataTables/datatables.min.js') }}"></script>
+  <link href="{{ url_for('static', path='/assets/css/sweetalert2.min') }}" rel="stylesheet">
+  <script src="{{ url_for('static', path='/assets/javascript/sweetalert2.all.min.js') }}"></script>
+</head>
+
+<body>
+  <div class="d-flex justify-content-start">
+    <a href="/control" class="btn border p-2 m-3"><img src="static/assets/img/icon_return.png"
+        style="height:25px; width: 25px;"></a>
+  </div>
+  <div class="container col-12 vh-75">
+
+    <h1 class="text-center mb-2"><strong>帳號管理</strong></h1>
+    <div class="d-flex justify-content-end mb-3 me-3">
+      <button class="btn btn-outline-primary btn-lg fs-6" data-mdb-ripple-color="dark" data-mdb-toggle="modal"
+        data-mdb-target="#staticBackdrop"><strong>新增用戶</strong> <i class="fas fa-user-plus"></i></button>
+    </div>
+    <table id="example" class="cell-border table table-hover table-bordered text-center text-nowrap align-middle"
+      style="width:100%">
+      <thead class="bg-primary text-white">
+        <tr>
+          <th>用戶名稱</th>
+          <th>職稱</th>
+          <th>帳號名稱</th>
+          <th>Email</th>
+          <th>創建時間</th>
+          <th>系統權限</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in account %}
+        <tr>
+          <td>{{i.UserName}}</td>
+          <td>{% if i.Job == 'doctor' %}醫師{% elif i.Job =='clerk' %}醫院行政{% endif %}</td>
+          <td>{{i.AccountName}}</td>
+          <td>{{i.Email}}</td>
+          <td>{{i.CreateTime.strftime("%Y-%m-%d, %H:%M")}}</td>
+          <td {% if i.UserRole == 'close' %} style="color: red;" {% endif %}>{% if i.UserRole != 'uncheck' and i.UserRole != 'close' %}啟用{% elif i.UserRole == 'close' %}停用{% else %}待開通{% endif %}</td>
+          <td>
+            <button hx-get="/accountEdit/{{i.PK_AccountID}}" hx-target="#one_account" hx-trigger="click"
+              class="btn btn-primary"
+              _="on htmx:afterOnLoad wait 10ms then add .show to #modal then add .show to #modal-backdrop">操作</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <div id="one_account">
+
+      </div>
+    </table>
+
+    <div class="modal modal-lg fade" id="staticBackdrop" data-mdb-backdrop="static" data-mdb-keyboard="false"
+      tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">新增用戶</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>按下「確認新增」後將發送驗證信，請等待約10秒完成程序</p>
+            <form action="/createAccount" method="post" class="needs-validation" novalidate>
+              <div class="row mt-4 mb-3">
+                <div class="col-5">
+                  <span class="me-3">職稱</span>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Job" id="inlineRadio2" value="doctor" checked />
+                    <label class="form-check-label" for="inlineRadio2">醫師</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Job" id="inlineRadio1" value="clerk" />
+                    <label class="form-check-label" for="inlineRadio1">醫院行政</label>
+                  </div>
+
+
+
+                </div>
+              </div>
+              <div class="row g-3 align-items-center">
+                <div class="col-5">
+                  <div class="form-outline">
+                    <input type="text" name="UserName" id="form16" class="form-control" data-mdb-showcounter="true"
+                      maxlength="35" pattern="[^$#!?@&]*" required/>
+                    <label class="form-label" for="form16">用戶姓名</label>
+                    <div class="form-helper"></div>
+                    <div class="invalid-feedback">請輸入符合格式 (不可為特殊符號如 "$#!?@&" )</div>
+                  </div>
+                </div>
+                <div class="col-5">
+                  <div class="form-outline">
+                    <input type="email" name="Email" id="form16" class="form-control" data-mdb-showcounter="true"
+                      maxlength="40" required />
+                    <label class="form-label" for="form16">Email</label>
+                    <div class="form-helper"></div>
+                    <div class="invalid-feedback">請確認Email符合格式</div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">關閉</button>
+            <button type="submit" class="btn btn-primary" onclick="alertCreateSuccess()">確認新增</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+    
+    <script>
+      $(document).ready(function () {
+        $('#example').DataTable({
+          order: [[6, 'desc']],
+        });
+      });
+    </script>
+    <script>
+      function closeModal() {
+        var container = document.getElementById("one_account")
+        var backdrop = document.getElementById("modal-backdrop")
+        var modal = document.getElementById("modal")
+
+        modal.classList.remove("show")
+        backdrop.classList.remove("show")
+
+        setTimeout(function () {
+          container.removeChild(backdrop)
+          container.removeChild(modal)
+        }, 200)
+      }
+    </script>
+    <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (() => {
+        'use strict';
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+        let check = 0;
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach((form) => {
+          form.addEventListener('submit', (event) => {
+            if (!form.checkValidity()) {
+              event.preventDefault();
+              event.stopPropagation();
+              check = 1;
+            }
+
+            form.classList.add('was-validated');
+          }, false);
+        });
+      })();
+    </script>
+    {% if accountCreateNotify %}
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: '帳號創建成功',
+        text: '若用戶未於三天內驗證，帳號將自動失效刪除'
+      })
+    </script>
+    {% elif emailrepeat %}
+    <script>
+      Swal.fire({
+        icon: 'warning',
+        title: 'Email已有人註冊',
+        text: '請確保每位使用者Email為獨一無二以利系統核對'
+      })
+    </script>
+    {% elif from_update %}
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: '您以修改帳號狀態',
+        text: '請確保並無操作錯誤'
+      })
+    </script>
+    {% endif %}
+
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+</body>
+
+</html>

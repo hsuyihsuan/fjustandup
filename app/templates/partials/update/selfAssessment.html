@@ -1,0 +1,41 @@
+<form hx-put="/updateSelfAssessment/{{patient_id}}/{{visit.VisitDate}}" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+    <input type="hidden" name="PK_VisitID" value="{{visit.PK_VisitID}}">
+    <div class="container">
+        <div class="row justify-content-start py-2">
+            <div class="col-5 mb-3">自覺嚴重程度</div>
+            <div class="col-5"></div>
+            <div class="col-11">
+                <div class="form-check form-check-inline col-3">
+                    <label for="mild" class="form-check-label">輕度</label>
+                    <input type="radio" name="SelfAssessment" id="mild" class="form-check-input" value="0" {% if
+                        visit.SelfAssessment==0 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline col-3">
+                    <label for="moderate" class="form-check-label">中度</label>
+                    <input type="radio" name="SelfAssessment" id="moderate" class="form-check-input" value="1" {% if
+                        visit.SelfAssessment==1 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline col-3">
+                    <label for="severe" class="form-check-label">重度</label>
+                    <input type="radio" name="SelfAssessment" id="severe" class="form-check-input" value="2" {% if
+                        visit.SelfAssessment==2 %} checked {% endif %}>
+                </div>
+            </div>
+    
+    
+        </div>
+        <div class="row">
+            <div class="col-11 py-3">
+                <label for="note" class="form-label">附註</label>
+                <input type="text" name="Note" id="note" class="form-control" max="30"
+                    value="{% if visit.Note != 'na' %}{{visit.Note}}{% else %}{% endif %}">
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">完成</button>
+    <button type="submit" class="btn btn-danger"
+        hx-get="/returnWatchVisitSelfAssessment/{{patient_id}}/{{visit.VisitDate}}">取消</button>
+   
+</form>

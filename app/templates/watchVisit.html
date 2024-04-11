@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>查看病歷</title>
+    <!-- <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet"> -->
+
+    <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <!-- <link href="{{ url_for('static', path='/assets/css/select2.min.css') }}" rel="stylesheet"> -->
+    <script src="{{ url_for('static', path='/assets/javascript/select2.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/css/style2.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/echarts.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/DataTables/datatables.min.js') }}"></script>
+
+    <script src="{{ url_for('static', path='/assets/javascript/_hyperscript.min.js') }}"></script>
+    <!-- 測試sweetalert2 -->
+    <link href="{{ url_for('static', path='/assets/css/sweetalert2.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/sweetalert2.all.min.js') }}"></script>
+    <style>
+        .form-switch {
+            padding-left: 0px !important;
+        }
+
+        .form-check {
+            padding-left: 0px !important;
+        }
+
+        .profile {
+            padding-bottom: 10px !important;
+        }
+    </style>
+</head>
+
+<body class="show-sidebar">
+    <nav class="navbar bg-primary" data-bs-theme="dark" style="position: fixed; width: 100%; z-index: 1;">
+
+        <h4 class="offset-md-5">
+            <label for="visit_date" class="form-label text-white">就診日期</label>
+            <select name="visit_date" id="visit_date" onchange="chooseDate(this.value)">
+                <!-- 暫時註解, 先別刪除 hx-include="[name='patient_id']" hx-get="/watchVisit" hx-target="#watchVisitBody" hx-swap="beforeend" _="on change remove #visit_content"-->
+                {% for one_visit_date in all_visit_date %}
+                {% if one_visit_date == (visit.VisitDate|string) %}
+                <option value="{{one_visit_date}}" selected>{{one_visit_date}}</option>
+                {% else %}
+                <option value="{{one_visit_date}}">{{one_visit_date}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </h4>
+
+    </nav>
+    <aside class="sidebar">
+        <div class="toggle">
+            <a href="#" class="burger js-menu-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span></span>
+            </a>
+        </div>
+        <div class="side-inner">
+
+            <div class="profile">
+                <h5 class="lead">看診醫師: {{input_user_name}}</h5>
+                <button class="btn btn-outline-primary btn-lg col-11 mt-1" {% if model_url %}
+                    hx-get="/aiSupport/{{patient_id}}" hx-target="#shap" hx-trigger="click"
+                    _="on htmx:afterOnLoad wait 10ms then add .show to #modal2 then add .show to #modal-backdrop2" {%
+                    else %} onclick="alertNoAiModel()" {% endif %}>AI醫療決策輔助</button>
+                <!-- <form action="/{{patient_id}}_{{visit.VisitDate}}_report" method="post"> -->
+                <button class="btn btn-outline-success btn-lg mt-2 col-11" data-mdb-toggle="modal"
+                    data-mdb-target="#exampleModal">下載病歷</button>
+                <!-- </form> -->
+
+
+                <div class="form-check form-switch d-flex justify-content-center mt-3">
+                    <div class="col-7">
+                        <label class="col-form-label form-check-label text-dark fs-5 ms-4"
+                            for="flexSwitchCheckChecked">警示狀態</label>
+                    </div>
+                    <div class="col-3"></div>
+                    <div class="col-3">
+                        <input type="hidden" name="Alert" value="0">
+                        <input class="form-check-input mt-3" type="checkbox" name="Alert" role="switch"
+                            id="flexSwitchCheckChecked" value="1" {% if alert %} checked {% endif %}
+                            hx-put="/updateAlert/{{patient_id}}/{{account_id}}" style="position: relative; top: 1px;">
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <div class="nav-menu">
+                <ul>
+                    <li><a href="/control"><span class="icon-notifications mr-3"></span>回到控制介面</a></li>
+                    <li><a href="/manage"><span class="icon-notifications mr-3"></span>回到管理病歷</a></li>
+                    <li><a href="#basic_block"><span class="icon-notifications mr-3"></span>基本資料</a></li>
+                    <li><a href="#medicine_block"><span class="icon-location-arrow mr-3"></span>用藥資訊</a></li>
+                    <li><a href="#thymus_block"><span class="icon-pie-chart mr-3"></span>胸腺資訊</a></li>
+                    <li><a href="#blood_test_block"><span class="icon-pie-chart mr-3"></span>抗體、抽血資訊</a></li>
+                    <li><a href="#qol_block"><span class="icon-pie-chart mr-3"></span>生活品質量表(QOL)</a></li>
+                    <li><a href="#qmg_block"><span class="icon-pie-chart mr-3"></span>QMG Score量表</a></li>
+                    <li><a href="#mg_composite_block"><span class="icon-pie-chart mr-3"></span>MG Composite量表</a></li>
+                    <li><a href="#adl_block"><span class="icon-pie-chart mr-3"></span>日常生活量表(ADL)</a></li>
+                    <li><a href="#assessment_block"><span class="icon-pie-chart mr-3"></span>評估資訊</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </aside>
+
+    <main class="container col-10" style="z-index: 0;">
+        <div class="d-flex flex-column bd-highlight mb-3" id="1">
+            <div class="card m-2 w-80" style="float:left;">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-primary" style="color:white;" id="basic_block">基本資料</li>
+                </ul>
+                <div class="card-body">
+                    {% include "partials/watchVisit/patient.html" %}
+
+                    <div class="list-group list-group-horizontal mt-3" id="list-tab" role="tablist">
+                        <a class="list-group-item list-group-item-action active button_active_for_basic_list"
+                            id="list-home-list" href="/basicFig/{{patient.PK_PatientID}}/height_and_weight"
+                            target="basic_iframe" role="tab" onclick="buttonActiveForBasic(this)">身高、體重</a>
+                        <a class="list-group-item list-group-item-action button_active_for_basic_list"
+                            id="list-profile-list" href="/basicFig/{{patient.PK_PatientID}}/blood_pressure"
+                            target="basic_iframe" role="tab" onclick="buttonActiveForBasic(this)">收縮壓、舒張壓</a>
+                        <!-- <a class="list-group-item list-group-item-action button_active_list" id="list-messages-list"
+                            href="#list-messages" role="basic_iframe" onclick="buttonActive(this)">現有症狀</a> -->
+                    </div>
+
+                    <iframe src="/basicFig/{{patient.PK_PatientID}}/height_and_weight" name="basic_iframe"
+                        class="w-100 basic" style="height: 80vh;"></iframe>
+                    {% include "partials/watchVisit/basicVisit.html" %}
+
+                </div>
+            </div>
+
+            <div class="card m-2 w-80" id="medicine_block">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-primary" style="color:white;">用藥資訊</li>
+                </ul>
+                <div class="card-body">
+                    <div id="medicine_fig" style="height: 80vh"></div>
+                    {% include "partials/watchVisit/medicine.html "%}
+                    <div class="container mt-4">
+                        <h4><b>其他用藥和頻率</b></h4>
+                        <div class="row justify-content-start">
+                            <div class="col">
+                                <input type="text" class="form-control"
+                                    value="{% if other_medicine %}{% for i in other_medicine %}{% if loop.index == 1%}{{i[0]}}：{{i[1]}}{% else %}、{{i[0]}}：{{i[1]}}{% endif %}{% endfor %}{% else %}尚無其他用藥{% endif %}">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card m-2 w-80" id="thymus_block">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-primary" style="color:white;">胸腺資訊</li>
+                </ul>
+                <div class="card-body">
+                    {% if thymus %}
+                    <div class="container">
+                        <h4 class="mt-2"><b>所有紀錄總表</b></h4>
+                    </div>
+
+                    <div>
+                        <table id="thymus_table" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">掃描日期</th>
+                                    <th colspan="2">斷層結果</th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in thymus %}
+                                {% if i.CtDate.strftime("%Y-%m-%d") != '0001-01-01' %}
+                                <tr>
+                                    <td>{{i.CtDate}}</td>
+
+                                    {% if i.ThymusStatus == 0 %}
+                                    <td style="background-color: lightgray;"></td>
+                                    <td>正常</td>
+                                    {% elif i.ThymusStatus == 1 %}
+                                    <td style="background-color: blue;"></td>
+                                    <td>胸腺萎縮</td>
+                                    {% elif i.ThymusStatus == 2 %}
+                                    <td style="background-color: yellow;"></td>
+                                    <td>胸腺增生</td>
+                                    {% else %}
+                                    <td style="background-color: red;"></td>
+                                    <td>胸腺瘤</td>
+                                    {% endif %}
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    {% include "partials/watchVisit/thymus.html" %}
+
+                    <div class="container">
+                        <div class="d-flex justify-content-between mt-4 mb-2">
+                            <h4><b>首次發現日期</b></h4>
+                        </div>
+                        <div class="row justify-content-start">
+                            <div class="col-2">
+                                <label class="col-form-label" for="first_time_thymus_atrophy">胸腺萎縮</label>
+                            </div>
+                            <div class="col-2">
+                                <input type="text" class="form-control" id="first_time_thymus_atrophy"
+                                    value="{% if not first_time_thymus_atrophy %}尚無紀錄{% else %}{{first_time_thymus_atrophy}}{% endif %}">
+                            </div>
+                            <div class="col-2">
+                                <label class="col-form-label" for="first_time_thymus_hyperplasia">胸腺增生</label>
+                            </div>
+                            <div class="col-2">
+                                <input type="text" class="form-control" id="first_time_thymus_hyperplasia"
+                                    value="{% if not first_time_thymus_hyperplasia %}尚無紀錄{% else %}{{first_time_thymus_hyperplasia}}{% endif %}">
+                            </div>
+                            <div class="col-2">
+                                <label class="col-form-label" for="first_time_thymus_thymoma">胸腺瘤</label>
+                            </div>
+                            <div class="col-2">
+                                <input type="text" class="form-control" id="first_time_thymus_thymoma"
+                                    value="{% if not first_time_thymus_thymoma %}尚無紀錄{% else %}{{first_time_thymus_thymoma}}{% endif %}">
+                            </div>
+
+                        </div>
+                        {% else %}
+                        <h2>尚無紀錄</h2>
+                        {% endif %}
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="card m-2 w-80" id="blood_test_block">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-primary" style="color:white;">抗體、抽血資訊</li>
+                </ul>
+                <div class="card-body">
+                    {% if blood_test %}
+                    <div class="container">
+                        <h4 class="mt-2"><b>所有紀錄總表</b></h4>
+                    </div>
+                    <div class="list-group list-group-horizontal mt-3" id="list-tab" role="tablist">
+                        <a class="list-group-item list-group-item-action active button_active_for_blood_test_list"
+                            id="list-home-list" href="/bloodTestFig/{{patient.PK_PatientID}}/AchR"
+                            target="blood_test_iframe" role="tab" onclick="buttonActiveForBloodTest(this)">AchR</a>
+                        <a class="list-group-item list-group-item-action button_active_for_blood_test_list"
+                            id="list-profile-list" href="/bloodTestFig/{{patient.PK_PatientID}}/TSH"
+                            target="blood_test_iframe" role="tab" onclick="buttonActiveForBloodTest(this)">TSH</a>
+                        <a class="list-group-item list-group-item-action button_active_for_blood_test_list"
+                            id="list-profile-list" href="/bloodTestFig/{{patient.PK_PatientID}}/fT4"
+                            target="blood_test_iframe" role="tab" onclick="buttonActiveForBloodTest(this)">fT4</a>
+                        <a class="list-group-item list-group-item-action button_active_for_blood_test_list"
+                            id="list-profile-list" href="/bloodTestFig/{{patient.PK_PatientID}}/ANA"
+                            target="blood_test_iframe" role="tab" onclick="buttonActiveForBloodTest(this)">ANA</a>
+                        <a class="list-group-item list-group-item-action button_active_for_blood_test_list"
+                            id="list-profile-list" href="/bloodTestFig/{{patient.PK_PatientID}}/UricAcid"
+                            target="blood_test_iframe" role="tab" onclick="buttonActiveForBloodTest(this)">UricAcid</a>
+
+                    </div>
+
+                    <iframe src="/bloodTestFig/{{patient.PK_PatientID}}/AchR" name="blood_test_iframe"
+                        class="w-100 basic" style="height: 80vh;"></iframe>
+
+
+
+                    <div class="container mt-3">
+                        <table id="blood_test_table" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>抽血日期</th>
+                                    <th>AchR抗體</th>
+                                    <th>TSH</th>
+                                    <th>fT4</th>
+                                    <th>ANA</th>
+                                    <th>Uric acid</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in blood_test %}
+                                {% if i.BloodTestDate.strftime("%Y-%m-%d") != '0001-01-01' %}
+                                <tr>
+                                    <td>{{i.BloodTestDate}}</td>
+                                    <td>{% if i.AchR > 0 %}{{'{:.2f}'.format(i.AchR)}}{% else %}未收集{% endif %}
+                                    </td>
+                                    <td>{% if i.TSH > 0 %}{{'{:.1f}'.format(i.TSH)}}{% else %}未收集{% endif %}
+                                    </td>
+                                    <td>{% if i.FreeThyroxine > 0 %}{{'{:.1f}'.format(i.FreeThyroxine)}}{% else
+                                        %}未收集{%
+                                        endif %}
+                                    </td>
+                                    <td>{% if i.ANA > 0 %}1:{{i.ANA}}{% else %}未收集{% endif %}</td>
+                                    <td>{% if i.UricAcid > 0 %}{{'{:.1f}'.format(i.UricAcid)}}{% else %}未收集{%
+                                        endif
+                                        %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% include "partials/watchVisit/bloodTest.html" %}
+
+                    {% else %}
+                    <h2>尚無紀錄</h2>
+
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card m-2 w-80" id="qol_block">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-primary" style="color:white;">生活品質量表(QOL)</li>
+                </ul>
+                <div class="card-body">
+                    {% if qol %}
+
+                    <div id="qol_fig" style="height: 80vh;"></div>
+                    {% include "partials/survey/qol.html" %}
+
+                    {% else %}
+                    <h2>尚無紀錄</h2>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <div class="card m-2 w-80" id="qmg_block">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-primary" style="color:white;">QMG Score量表</li>
+            </ul>
+            <div class="card-body">
+                {% if qmg %}
+
+                <div id="qmg_fig" style="height: 80vh;"></div>
+                {% include "partials/survey/qmg.html" %}
+
+                {% else %}
+                <h2>尚無紀錄</h2>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="card m-2 w-80" id="mg_composite_block">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-primary" style="color:white;">MG
+                    composite量表</li>
+            </ul>
+            <div class="card-body">
+                {% if mg_composite %}
+                <div id="mg_composite_fig" style="height: 80vh;"></div>
+
+                {% include "partials/survey/mgComposite.html" %}
+
+                {% else %}
+                <h2>尚無紀錄</h2>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="card m-2 w-80" id="adl_block">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-primary" style="color:white;">日常生活量表(ADL)</li>
+            </ul>
+            <div class="card-body">
+                {% if adl %}
+                <div id="adl_fig" style="height: 80vh;"></div>
+
+                {% include "partials/survey/adl.html" %}
+
+                {% else %}
+                <h2>尚無紀錄</h2>
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="card m-2 w-80" id="assessment_block">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-primary" style="color:white;">評估資訊</li>
+            </ul>
+            <div class="card-body">
+                {% include "partials/watchVisit/SelfAssessment.html" %}
+            </div>
+        </div>
+
+        </div>
+        <div class="d-flex justify-content-center mt-2">
+            <!-- <form>
+                <div class="d-flex justify-content-center mt-2">
+                    <input type="button" class="submit btn btn-primary w-auto" value="AI醫療決策輔助功能"
+                        onclick="window.location.href='/downloadcsv/{{patient.PK_PatientID}}/{{visit.VisitDate}}'">
+                </div>
+            </form> -->
+        </div>
+    </main>
+    <div id="shap"></div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">下載病歷</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="/{{patient_id}}_{{visit.VisitDate}}_report" class="needs-validation"
+                    novalidate>
+                    <div class="modal-body">
+                        <p class="text-dark">按下「確認下載」後約10秒完成作業程序，始可關閉視窗</p>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">原因(必填):</label>
+                            <input type="hidden" name="RecordType" value="下載">
+                            <input type="hidden" name="Content" value="{{patient_id}}_{{visit.VisitDate}}">
+                            <textarea name="Reason" class="form-control" id="message-text" rows="5" cols="30"
+                                required></textarea>
+                            <div class="invalid-feedback">請輸入下載原因</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">關閉</button>
+                        <button type="submit" class="btn btn-primary download">確認下載</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="basic_visit"></div>
+    <div id="modal_thymus_block"></div>
+
+
+    <script src="{{ url_for('static', path='/assets/javascript/bootstrap.min.js') }}"></script>
+    <script>
+        function chooseDate(value) {
+            window.location.assign(value);
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#thymus_table').DataTable({
+                info: false,
+                // searching: false,
+                // scrollX: true,
+                // scrollY: '32vh',
+                // scrollCollapse: true,
+                paging: false,
+                order: [[0, 'desc']],
+
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#blood_test_table').DataTable({
+                info: false,
+                searching: false,
+                scrollY: '32vh',
+                scrollCollapse: true,
+                paging: false,
+                order: [[0, 'desc']],
+
+            });
+        });
+    </script>
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/sidebar.js') }}"></script>
+    <script>
+        function buttonActiveForBasic(e) {
+            let button_deactive = document.querySelectorAll(".button_active_for_basic_list");
+            for (let i = 0; i < button_deactive.length; ++i) {
+                button_deactive[i].classList.remove('active');
+            }
+
+            e.classList.add('active');
+        }
+    </script>
+    <script>
+        function buttonActiveForBloodTest(e) {
+            let button_deactive = document.querySelectorAll(".button_active_for_blood_test_list");
+            for (let i = 0; i < button_deactive.length; ++i) {
+                button_deactive[i].classList.remove('active');
+            }
+
+            e.classList.add('active');
+        }
+    </script>
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            'use strict';
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation');
+            let check = 0;
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms).forEach((form) => {
+                form.addEventListener('submit', (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        check = 1;
+                    }
+
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+    <script>
+        function closeModal2() {
+            var container2 = document.getElementById("shap")
+            var backdrop2 = document.getElementById("modal-backdrop2")
+            var modal2 = document.getElementById("modal2")
+
+            modal2.classList.remove("show")
+            backdrop2.classList.remove("show")
+
+            setTimeout(function () {
+                container2.removeChild(backdrop2)
+                container2.removeChild(modal2)
+            }, 200)
+        }
+    </script>
+    <script>
+        function closeModal3() {
+            var container3 = document.getElementById("basic_visit")
+            var backdrop3 = document.getElementById("modal-backdrop3")
+            var modal3 = document.getElementById("modal3")
+
+            modal3.classList.remove("show")
+            backdrop3.classList.remove("show")
+
+            setTimeout(function () {
+                container3.removeChild(backdrop3)
+                container3.removeChild(modal3)
+            }, 200)
+        }
+    </script>
+    <script>
+        
+        function closeModal4() {
+            var container4 = document.getElementById("modal_thymus_block")
+            var backdrop4 = document.getElementById("modal-backdrop4")
+            var modal4 = document.getElementById("modal4")
+
+            modal4.classList.remove("show")
+            backdrop4.classList.remove("show")
+
+            setTimeout(function () {
+                container4.removeChild(backdrop4)
+                container4.removeChild(modal4)
+            }, 200)
+        }
+    </script>
+    <script src="{{ url_for('static', path='/assets/javascript/survey.js') }}"></script>
+    <script>
+        function alertNoAiModel() {
+            Swal.fire({
+                icon: 'warning',
+                title: '目前尚無AI模型建置',
+                text: '您需要至AI模式管理進行設定',
+            })
+        }
+
+    </script>
+    <script>
+        $(document).on("click", ".basic_visit", function () {
+            setTimeout(function () {
+                location.reload();
+            }, 10); // 3000 milliseconds = 3 secondss
+        });
+    </script>
+    <script>
+        (() => {
+            'use strict';
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms).forEach((form) => {
+                form.addEventListener('submit', (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+    {% include "partials/watchVisit/figureScript.html" %}
+</body>
+
+
+</html>

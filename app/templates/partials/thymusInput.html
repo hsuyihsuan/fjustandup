@@ -1,0 +1,32 @@
+<div id="thymus_input" class="col-11">
+    <div class="col-12">
+        <div>電腦斷層結果</div>
+    </div>
+    <div class="col-12 row justify-content-around">
+        <div class="col-12">
+            <div class="form-check form-check-inline col-2">
+                <label for="normal" class="form-check-label">正常</label>
+                <input type="radio" name="ThymusStatus" id="normal" class="form-check-input" value="0" checked>
+            </div>
+            <div class="form-check form-check-inline col-2">
+                <label for="atrophy" class="form-check-label">胸腺萎縮</label>
+                <input type="radio" name="ThymusStatus" id="atrophy" class="form-check-input" value="1">
+            </div>
+            <div class="form-check form-check-inline col-2">
+                <label for="hyperplasia" class="form-check-label">胸腺增生</label>
+                <input type="radio" name="ThymusStatus" id="hyperplasia" class="form-check-input" value="2">
+            </div>
+            <div class="form-check form-check-inline col-2">
+                <label for="thymoma" class="form-check-label">胸腺瘤</label>
+                <input type="radio" name="ThymusStatus" id="thymoma" class="form-check-input" value="3">
+            </div>
+        </div>
+       
+    </div>
+    <div class="col-7 pt-2">
+        <div>
+            <label for="thymus_description" class="form-label">基本病理描述</label>
+            <input type="text" name="ThymusDescription" id="thymus_description" class="form-control" max="20">
+        </div>
+    </div>
+</div>

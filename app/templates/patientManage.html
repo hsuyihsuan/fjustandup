@@ -1,0 +1,248 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>管理病歷</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet"> -->
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/DataTables/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="{{ url_for('static', path='/assets/javascript/sweetalert2.all.min.js') }}"></script>
+</head>
+
+<body>
+
+    <div class="shadow-sm">
+        <div class="container">
+            <div class="row">
+                <div class="col-2">
+                    <a type="button" href="/control" class="btn border p-2 m-3"><img
+                            src="/static/assets/img/icon_return.png" style="height:25px; width: 25px;"></a>
+                </div>
+                <div class=col-8>
+                    <h2 class="text-center mt-4"><strong>管理病歷</strong></h2>
+                    <!--cdn https://img.icons8.com/external-line-icons-royyan-wijaya/64/null/external-arrow-arrow-me-line-icons-royyan-wijaya-9.png-->
+                </div>
+                <div>
+                    <div class="col-2">
+                        <a href="#" class="p-3 m-1 position-absolute top-0 end-0"><img
+                                src="/static/assets/img/icon_user.png" style="height:40px; width: 40px;"></a>
+                    </div>
+                </div>
+
+                <!--cdn https://img.icons8.com/external-kiranshastry-lineal-kiranshastry/100/000000/external-user-interface-kiranshastry-lineal-kiranshastry.png-->
+            </div>
+        </div>
+
+        <!--navbar start-->
+        <div class="bg-primary">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link link-light" href="#"></a> <!-- 下載病歷(開發中)-->
+                </li>
+                <li class="nav-item">
+                    <!-- <a class="nav-link link-light" aria-current="page" href="/add">新增病歷</a> -->
+                </li>
+                <!-- <li class="nav-item">
+				<a class="nav-link link-light" href="#">變更警示</a>
+			</li> -->
+            </ul>
+        </div>
+        <!--navbar end-->
+
+        <!--DataTable card start-->
+        <div class="container p-3 vh-75 d-flex">
+            <div class="card col-11 col-sm-11 col-lg-11 position-absolute start-50 translate-middle-x shadow-sm">
+                <div class="card-body p-3" style="font-size:12px;">
+                    <div class="d-flex justify-content-start mb-3">
+                        <button class="btn btn-outline-primary fs-6" data-mdb-ripple-color="dark"
+                            data-mdb-toggle="modal" data-mdb-target="#staticBackdrop"><strong>新增病歷</strong> <i
+                                class="fas fa-user-plus"></i></button>
+                    </div>
+
+                    <table id="example" class="table table-hover" style="width:100%">
+                        <thead class="h5">
+                            <tr>
+                                <th>病歷號</th>
+                                <th>姓名</th>
+                                <th>性別</th>
+                                <th>出生日期</th>
+                                <th>年齡</th>
+                            </tr>
+                        </thead>
+                        <tbody class="h5">
+                            {% for i, j in patient %}
+                            <tr>
+                                <td><a href="#">{{i.PK_PatientID}}</a>  <!--hx-get="/patientControl/{{i.PK_PatientID}}" hx-target="#control_patient"hx-trigger="click" class="btn btn-primary"_="on htmx:afterOnLoad wait 10ms then add .show to #modal then add .show to #modal-backdrop"--></td>
+                                <td>{{i.PatientName}}</td>
+                                <td>{% if i.PatientSex %} 男 {% else %} 女 {% endif %}</td>
+                                <td>{{i.PatientBirth}}</td>
+                                <td>{{j}}歲</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="staticBackdrop" data-mdb-backdrop="static" data-mdb-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel"><strong>新增病歷</strong></h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- <p>按下「確認新增」後將發送驗證信，請等待約10秒完成程序</p> -->
+                    <form action="/createPatient" method="post" class="needs-validation" novalidate>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-5">
+                                <div class="form-outline">
+                                    <input type="text" name="PK_PatientID" id="form16" class="form-control"
+                                        data-mdb-showcounter="true" maxlength="10" pattern="[0-9]{9}[A-Z]{1}"
+                                        required />
+                                    <label class="form-label" for="form16">病歷號碼</label>
+                                    <div class="form-helper"></div>
+                                    <div class="invalid-feedback">請輸入符合格式 (例如：123456789A)</div>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="form-outline">
+                                    <input type="text" name="PatientName" id="form16" class="form-control"
+                                        data-mdb-showcounter="true" maxlength="35" pattern="[^$#!?@&]*" required />
+                                    <label class="form-label" for="form16">姓名</label>
+                                    <div class="form-helper"></div>
+                                    <div class="invalid-feedback">請輸入符合格式 (不可為特殊符號如 "$#!?@&" )</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center mt-3">
+                            <div class="col-5 d-flex justify-content-between">
+                                <span>性別</span>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="PatientSex" id="inlineRadio2"
+                                        value="1" checked />
+                                    <label class="form-check-label" for="inlineRadio2">男</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="PatientSex" value="0"
+                                        id="inlineRadio1" />
+                                    <label class="form-check-label" for="inlineRadio1">女</label>
+                                </div>
+
+
+
+                            </div>
+                            <div class="col-5">
+                                <div class="form-outline">
+                                    <input type="date" name="PatientBirth" id="form16" class="form-control"
+                                        min="{{min_input_date}}" max="{{today}}" required />
+                                    <label class="form-label" for="form16">出生日期</label>
+                                    <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center mt-3">
+                            <div class="col-2">
+                                初診醫師
+                            </div>
+                            <div class="col-3">
+                                <select name="FK_AccountID" class="form-select" required>
+                                    {% for i in doctor %}
+                                    <option value="{{i.PK_AccountID}}">{{i.UserName}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">目前尚無醫師登錄本系統</div>
+                            </div>
+                            <div class="col-5"></div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">關閉</button>
+                    <button type="submit" class="btn btn-primary" onclick="alertCreateSuccess()">確認新增</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="control_patient"></div>
+
+
+
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+
+    <!--DataTable card start-->
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                // "columnDefs": [{
+                // 	"targets": 6,
+                // 	"orderDataType": "dom-checkbox"
+                // }],
+                // order: [[6, 'desc']],
+
+            });
+        });
+    </script>
+    <!-- <script>
+        function closeModal() {
+            var container = document.getElementById("control_patient")
+            var backdrop = document.getElementById("modal-backdrop")
+            var modal = document.getElementById("modal")
+
+            modal.classList.remove("show")
+            backdrop.classList.remove("show")
+
+            setTimeout(function () {
+                container.removeChild(backdrop)
+                container.removeChild(modal)
+            }, 200)
+        }
+    </script> -->
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            'use strict';
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation');
+            let check = 0;
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms).forEach((form) => {
+                form.addEventListener('submit', (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        check = 1;
+                    }
+
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+    {% if create %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: '病歷新增成功',
+            //  text: '請'
+        })
+    </script>
+
+    {% endif %}
+</body>
+</body>
+
+</html>

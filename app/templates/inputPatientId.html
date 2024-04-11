@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>輸入病歷號碼</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/sweetalert2.all.min.js') }}"></script>
+    <!-- <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet"> -->
+    <style>
+        body,
+        html {
+            height: 100%;
+
+        }
+
+        .bg {
+            /* The image used */
+            background-image: url("/static/assets/img/control_background.png");
+
+            /* Full height */
+            height: 100%;
+
+            /* Center and scale the image nicely */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+
+        }
+    </style>
+
+<body>
+    <div class="bg">
+        <div>
+            <a type="button" href="/control" class="btn border p-2 m-3"><img src="/static/assets/img/icon_return.png"
+                    style="height:25px; width: 25px;"></a>
+            <!-- <a href="#" class="p-3 m-1 position-absolute top-0 end-0"><img src="/static/assets/img/icon_user.png" style="height:40px; width: 40px;"></a> -->
+        </div>
+        <div class="container">
+            <div class="card col-10 col-sm-8 col-lg-6 position-absolute top-50 start-50 translate-middle shadow-sm">
+                <div class="card-body p-5 pb-4">
+                    <form method="post" action="/add" class="mb-1 position-relative needs-validation" novalidate>
+                        <label for="formGroupExampleInput" class="form-label mb-0 fs-5">請輸入病歷號碼</label>
+                        <input type="text" class="form-control" name="patient_id" class="form-control" minlength="10"
+                            maxlength="10" pattern="[0-9]{9}[A-Z]{1}" id="formGroupExampleInput" required>
+                        <div class="invalid-feedback">請輸入符合格式 (例如：123456789A)</div>
+                        <div class="text-center"><button type="submit" class="btn btn-primary w-auto mt-3">查詢</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            'use strict';
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms).forEach((form) => {
+                form.addEventListener('submit', (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    {% if first_doctor_incorrect %}
+    <script>
+        Swal.fire({
+            icon: 'info',
+            title: '該病歷初診醫師資料匹配不正確',
+            // text: '請重新登入確認啟用狀態'
+        })
+    </script>
+    {% endif %}
+    {% if not_exist %}
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: '該病歷號不存在',
+            text: '若與所想不符，請和醫院行政確認相關資料'
+        })
+    </script>
+    {% endif %}
+</body>
+
+</html>

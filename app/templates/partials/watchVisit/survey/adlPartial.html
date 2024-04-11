@@ -1,0 +1,80 @@
+{% if update %}
+<form hx-put="/updateADL/{{patient_id}}/{{adl_date}}" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+    <input type="hidden" name="PK_ADLTableID" value="{{adl_id}}">
+{% endif %}
+  
+
+
+<table class="table table-hover mt-3">
+    <thead style="position: sticky; top: 0; background-color: white;">
+        <th class="col-3">&nbsp;</th>
+        <th>0(無影響)</th>
+        <th>1(輕微影響)</th>
+        <th>2(中等影響)</th>
+        <th>3(嚴重影響)</th>
+    </thead>
+    <tbody>
+        {% for i in (
+            ('1.講話', 'adl_talking', 'ADL_Talking'),
+            ('2.咀嚼', 'adl_chewing', 'ADL_Chewing'),
+            ('3.吞嚥', 'adl_swallowing', 'ADL_Swallowing'),
+            ('4.呼吸', 'adl_breathing', 'ADL_Breathing'),
+            ('5.刷牙或梳頭', 'adl_brush_teeth_or_comb_hair', 'ADL_BrushTeethOrCombHair'), 
+            ('6.從椅子上起身', 'adl_arise_from_chair', 'ADL_AriseFromChair'),
+            ('7.複視或雙影', 'adl_double_vision', 'ADL_DoubleVision'),
+            ('8.眼瞼下垂', 'adl_eyelid', 'ADL_Eyelid')
+            )
+            %}
+            <tr>
+                <td>
+                {{i[0]}}
+                </td>
+            {% for j in (0, 1, 2, 3) %}
+                <td>
+                    <div class="form-check form-check-inline">
+                        <label for="{{i[1]}}" class="form-check-label" style="font-size: 0.8rem;"></label>
+                        <input type="radio" name="{{i[2]}}" id="{{i[1]}}" class="form-check-input adl_score" value="{{j}}" 
+                        {% if adl %} 
+                            {% if adl[i[2]] == j %}
+                                checked
+                            {% elif update %}
+                            {% elif watch %}
+                                disabled
+                            {% endif %}
+                        {% else %}
+                            {% if j == 0 %}
+                                checked
+                            {% endif %}
+                        {% endif %}
+                                onchange="ADLTotal()">
+                    </div>
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+        
+    </tbody>
+</table>
+<div class="row justify-content-between">
+    {% if adl and not watch %}
+    <div class="col-4">
+        <label for="last_time_adl_score" class="form-label">上次總分 {% if adl_date %} ({{adl_date}}) {% endif %}</label>
+        <input type="number" id="last_time_adl_score" class="form-control text-center" readonly value="{{ adl.values() | sum }}" >
+    </div>
+    {% endif %}
+    <div class="col-4">
+        <label for="adl_score" class="form-label">本次總分</label>
+        <input type="number" name="ADL_Sum" id="adl_score" class="form-control text-center" readonly value="{{ adl.values() | sum }}" >
+    </div>
+
+
+</div>
+
+{% if update %}
+    <button type="submit" class="btn btn-primary mt-3">完成</button>
+    <button type="submit" class="btn btn-danger mt-3 ms-2"
+        hx-get="/returnWatchVisitADL/{{patient_id}}/{{adl_date}}">取消</button>
+   
+</form>
+{% endif %}

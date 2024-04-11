@@ -1,0 +1,29 @@
+<div hx-target="this" hx-swap="outerHTML">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between mt-4 mb-2">
+            <h4><b>單次紀錄選擇</b></h4>
+        </div>
+        <div class="row justify-content-between">
+            <div class="col-10">
+                <select class="form-select bg-light" aria-label="Default select example" name="blood_test_date"
+                    hx-get="/getThymusOrBloodTest" 
+                    hx-include="[name=patient_id]">
+                    {% for i in all_blood_test_dates|reverse %}
+                    <option value="{{i}}" {% if i == blood_test_date %} selected {% endif %}>{{i}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <!-- <button hx-get="/updateBloodTest/{{one_blood_test.FK_PatientID}}/{{one_blood_test.BloodTestDate}}"
+                    class="btn btn-primary ms-5">編輯</button> -->
+            </div>
+        </div>
+
+    </div>
+
+    {% include "partials/watchVisit/bloodTestPartial.html" %}
+
+
+
+
+</div>

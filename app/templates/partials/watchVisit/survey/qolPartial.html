@@ -1,0 +1,85 @@
+{% if update %}
+<form hx-put="/updateQOL/{{patient_id}}/{{qol_date}}" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+    <input type="hidden" name="PK_QOLTableID" value="{{qol_id}}">
+{% endif %}
+    <table class="table table-hover">
+        <thead style="position: sticky; top: 0; background-color: white;">
+            <th class="col-6">&nbsp;</th>
+            <th>完全不會</th>
+            <th>常常會</th>
+            <th>一直都會</th>
+        </thead>
+        <tbody>
+            {% for i in (
+            ('1. 我會因為疾病感到挫折', 'qol_frustrated_by_mg', 'QOL_FrustratedByMG'),
+            ('2. 我在看東西會有困難', 'qol_trouble_using_eyes', 'QOL_TroubleUsingEyes'),
+            ('3. 我在吃東西會有困難', 'qol_trouble_eating', 'QOL_TroubleEating'),
+            ('4.我因為疾病限制我的社交生活', 'qol_limited_social_activity', 'QOL_LimitedSocialActivity'),
+            ('5.我因為疾病限制我的休閒娛樂', 'qol_limited_hobby_and_fun', 'QOL_LimitedHobbyAndFun'),
+            ('6.在滿足家庭需求我有困難', 'qol_trouble_meeting_family_needs', 'QOL_TroubleMeetingFamilyNeeds'),
+            ('7.因應我的狀況我必須有些計畫', 'qol_need_to_make_plans', 'QOL_NeedToMakePlans'),
+            ('8.我的疾病對我的工作狀態有負面影響', 'qol_negative_to_job', 'QOL_NegativeToJob'),
+            ('9.我的疾病使我說話困難', 'qol_difficult_speaking', 'QOL_DifficultSpeaking'),
+            ('10.我的疾病使我開車, 騎車困難', 'qol_trouble_driving', 'QOL_TroubleDriving'),
+            ('11.我的疾病使我憂鬱', 'qol_depressed_about_mg', 'QOL_DepressedAboutMg'),
+            ('12.我的疾病使我走路有困難', 'qol_trouble_walking', 'QOL_TroubleWalking'),
+            ('13.我的疾病使我到公共場所有困難', 'qol_trouble_getting_around_public', 'QOL_TroubleGettingAroundPublic'),
+            ('14.我覺得自己被疾病擊垮', 'qol_overwhelmed_by_mg', 'QOL_OverWhelmedByMg'),
+            ('15.我的疾病使我無法完成梳洗工作', 'qol_trouble_grooming', 'QOL_TroubleGrooming')
+            ) %}
+            <tr>
+                <td>
+                    {{i[0]}}
+                </td>
+
+                {% for j in (0, 1, 2) %}
+                <td>
+                    <div class="form-check form-check-inline">
+                        <label for="{{i[1]}}" class="form-check-label"></label>
+                        <input type="radio" name="{{i[2]}}" id="{{i[1]}}" class="form-check-input qol_score"
+                            value="{{j}}" {% if qol %} 
+                                                {% if qol[i[2]]==j %} 
+                                                    checked 
+                                                {% elif update %} 
+                                                {% elif watch %}
+                                                    disabled 
+                                                {% endif %} 
+                                          {% else %} 
+                                                {% if j==0 %} 
+                                                    checked 
+                                                {% endif %} 
+                                          {% endif %}
+                            onchange="QOLTotal()">
+                    </div>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    <div class="row justify-content-between">
+        {% if qol and not watch %}
+        <div class="col-4">
+            <label for="last_time_qol_score" class="form-label">上次總分 {% if qol_date %} ({{qol_date}}) {% endif
+                %}</label>
+            <input type="number" id="last_time_qol_score" class="form-control text-center" readonly
+                value="{{ qol.values() | sum }}">
+        </div>
+        {% endif %}
+        <div class="col-4">
+            <label for="qol_score" class="form-label">本次總分</label>
+            <input type="number" name="QOL_Sum" id="qol_score" class="form-control text-center" readonly
+                value="{{ qol.values() | sum }}">
+        </div>
+
+    </div>
+
+{% if update %}
+    <button type="submit" class="btn btn-primary mt-3">完成</button>
+    <button type="submit" class="btn btn-danger mt-3 ms-2"
+        hx-get="/returnWatchVisitQOL/{{patient_id}}/{{qol_date}}">取消</button>
+
+</form>
+{% endif %}

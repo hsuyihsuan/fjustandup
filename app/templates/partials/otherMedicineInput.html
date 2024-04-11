@@ -1,0 +1,33 @@
+<div class="row justify-content-around pt-3 pb-2" id="other_medicine_block">
+    <div class="col-5">
+        <div>
+            <div class="row g-3 align-items-center p-1">
+                <div class="col-10">
+                    <input type="text" name="OtherMedicineName" id="other_medicine" class="form-control"
+                        pattern="[^\s]*" placeholder="其他用藥"> <!--hx-get="/add"
+                                hx-target="#other_medicine_block" hx-swap="beforeend"
+                                hx-include="[name=patient_id]"-->
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-primary btn-floating" hx-get="/delete"
+                        hx-target="closest #other_medicine_block" hx-include="[name=OtherMedicineName]"
+                        hx-swap="delete">
+                        <i class="fas fa-minus fa-2x"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row g-3 align-items-center p-1">
+                <div class="col-9 range">
+                    <input type="range" name="OtherMedicineCount" id="id_OtherMedicineName" class="form-range" value="1"
+                        min="1" max="20" oninput="number_{{OtherMedicineName}}.value=value">
+                </div>
+                <div class="col-3">
+                    <input type="number" name="" id="number_{{OtherMedicineName}}" class="form-control text-center"
+                        value="1" min="1" max="20" oninput="id_{{OtherMedicineName}}.value=value">
+                    <div class="invalid-feedback">其他用藥需介於 1 ~ 20 顆</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-5"></div>
+</div>

@@ -1,0 +1,84 @@
+<div> <!--hx-target="this" hx-swap="outerHTML"-->
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between">
+            <h4><b>就診基本資料</b></h4>{% if session_account_id == visit.FK_AccountID %}<button hx-get="/updateBasicVisit/{{patient_id}}/{{visit.VisitDate}}" hx-target="#basic_visit" 
+            hx-trigger="click" _="on htmx:afterOnLoad wait 10ms then add .show to #modal3 then add .show to #modal-backdrop3" class="btn btn-primary">編輯</button>{% endif %}
+        </div>
+
+        <div class="row my-3">
+            <div class="col-2">
+                <label for="treat" class="col-form-label d-flex">就診狀態</dlabel>
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control text-center" id="treat"
+                    value="{% if visit.Treat == 4 %} 開刀 {% elif visit.Treat == 3 %} RTX {% elif visit.Treat == 2 %} IVIG {% elif visit.Treat == 1 %} PP {% else %} 看診 {% endif %}">
+            </div>
+            <div class="col-2">
+                <label for="mgfa" class="col-form-label">MGFA臨床分類</label>
+            </div>
+            <div class="col-2">
+                <input type="text" id="mgfa" class="form-control text-center"
+                    value="{% if visit.MGFA_Classification==0 %}I{% elif visit.MGFA_Classification==1 %}IIA{% elif visit.MGFA_Classification==2 %}IIB{% elif visit.MGFA_Classification==3 %}IIIA{% elif visit.MGFA_Classification==4 %}IIIB{% elif visit.MGFA_Classification==5 %}IVA{% elif visit.MGFA_Classification==6 %}IVB{% elif visit.MGFA_Classification==7 %}V{% endif %}"
+                    readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <label for="height" class="col-form-label">身高</label>
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control text-center" id="height"
+                    value="{{'{:.1f}'.format(visit.Height)}} cm" readonly>
+            </div>
+            <div class="col-2">
+                <label for="weight" class="col-form-label text-center">體重</label>
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control text-center" id="weight"
+                    value="{{'{:.1f}'.format(visit.Weight)}} kg" readonly>
+            </div>
+            <div class="col-2">
+                <label for="bmi" class="col-form-label">BMI</dlabel>
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control text-center" id="bmi" value="{{bmi}}">
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-2">
+                <label for="sbp" class="col-form-label">收縮壓</label>
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control text-center" id="sbp"
+                    value="{% if visit.Sbp != -1 %} {{visit.Sbp}} mmHg {% else %} 尚無紀錄 {% endif %}">
+            </div>
+            <div class="col-2">
+                <label for="dbp" class="col-form-label">舒張壓</label>
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control text-center" id="dbp"
+                    value="{% if visit.Dbp != -1 %} {{visit.Dbp}} mmHg {% else %} 尚無紀錄 {% endif %}">
+            </div>
+          
+        </div>
+    </div>
+
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <label for="symptom" class="col-form-label">現有症狀</label>
+                <input type="text" class="form-control" id="symptom"
+                    value="{% if not (visit.Ptosis or visit.Diplopia or visit.Dysphasia or visit.Dysarthria or visit.Dyspnea or visit.LimbWeakness) %}{{尚無症狀}}{% else %}{% if visit.Ptosis %}眼瞼下垂{% endif %}{% if visit.Diplopia %}、複視{% endif %}{% if visit.Dysphasia %}、吞嚥困難{% endif %}{% if visit.Dysarthria %} 、講話不清 {% endif %}{% if visit.Dyspnea %}、呼吸困難{% endif %}{% if visit.LimbWeakness %}、手腳無力{% endif %}{% endif %}">
+            </div>
+            <div class="col">
+                <label for="other_disease" class="col-form-label">其他疾病</label>
+                <input type="text" class="form-control" id="other_disease"
+                    value="{% if not other_disease %}尚無其他疾病{% else %}{% for i in other_disease %} {% if loop.index == 1 %}{{i[0]}}{% else %}、{{i[0]}}{% endif %}{% endfor %}{% endif %}">
+            </div>
+        </div>
+    </div>
+</div>

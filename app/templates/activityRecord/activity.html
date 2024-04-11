@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>活動紀錄</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet"> -->
+	<script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+	<link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', path='/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+	<script src="{{ url_for('static', path='/assets/DataTables/datatables.min.js') }}"></script>
+	<script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+
+</head>
+
+<body>
+
+	<div class="shadow-sm">
+		<div class="container">
+			<div class="row">
+				<div class="col-2">
+					<a type="button" href="/control" class="btn border p-2 m-3"><img
+							src="/static/assets/img/icon_return.png" style="height:25px; width: 25px;"></a>
+				</div>
+				<div class=col-8>
+					<h3 class="text-center mt-4">活動紀錄</h3>
+					<!--cdn https://img.icons8.com/external-line-icons-royyan-wijaya/64/null/external-arrow-arrow-me-line-icons-royyan-wijaya-9.png-->
+				</div>
+				<div>
+					<div class="col-2">
+						<!-- <a href="#" class="p-3 m-1 position-absolute top-0 end-0"><img
+								src="/static/assets/img/icon_user.png" style="height:40px; width: 40px;"></a> -->
+					</div>
+				</div>
+
+				<!--cdn https://img.icons8.com/external-kiranshastry-lineal-kiranshastry/100/000000/external-user-interface-kiranshastry-lineal-kiranshastry.png-->
+			</div>
+		</div>
+
+		<!--navbar start-->
+		<div class="bg-primary">
+			<ul class="nav">
+				<li class="nav-item">
+					<a class="nav-link link-light" href="#"></a> <!-- 下載病歷(開發中)-->
+				</li>
+				<li class="nav-item">
+					<!-- <a class="nav-link link-light" aria-current="page" href="/add">新增病歷</a> -->
+				</li>
+				<!-- <li class="nav-item">
+				<a class="nav-link link-light" href="#">變更警示</a>
+			</li> -->
+			</ul>
+		</div>
+		<!--navbar end-->
+
+		<!--DataTable card start-->
+		<div class="container p-3 vh-75 d-flex">
+			<div class="card col-11 col-sm-11 col-lg-11 position-absolute start-50 translate-middle-x shadow-sm">
+				<div class="card-body p-3" style="font-size:12px;">
+					<table id="example" class="table table-hover" style="width:100%">
+						<thead class="h5">
+							<tr>
+								<th>紀錄時間</th>
+								<th>類型</th>
+								<th>目標病歷</th>
+								<th>目標主題</th>
+								<th>目標日期</th>
+								<th>使用者</th>
+								<th>活動理由</th>
+							</tr>
+						</thead>
+						<tbody class="h5">
+							{% for i in activity %}
+							<tr>
+								<td>{{i[0].RecordTime.strftime('%Y-%m-%d, %H:%M')}}</td>
+								<td>{{i[0].RecordType}}</td>
+								<td>{{i[0].FK_PatientID}}</td>
+								<td>{{i[0].TargetContent}}</td>
+								<td>{{i[0].TargetDate}}</td>
+								<td>{{i[1]}}</td>
+								<td><button class="btn btn-primary"
+										hx-get="/watchReasonFromControl_{{i[0].PK_ActiveRecordID}}"
+										hx-target="#modals_here" hx-trigger="click"
+										_="on htmx:afterOnLoad wait 10ms then add .show to #modal then add .show to #modal-backdrop">查看</button>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
+				</div>
+
+
+
+			</div>
+		</div>
+		<div id="modals_here"></div>
+		<!--DataTable card start-->
+		<script>
+			$.fn.dataTable.ext.order['dom-checkbox'] = function (settings, col) {
+				return this.api().column(col, { order: 'index' }).nodes().map(function (td, i) {
+					return $('input', td).prop('checked') ? '1' : '0';
+				});
+			};
+
+
+			$(document).ready(function () {
+				$('#example').DataTable({
+					"columnDefs": [{
+						"targets": 5,
+						"orderDataType": "dom-checkbox"
+					}],
+					order: [[5, 'desc']],
+
+				});
+			});
+		</script>
+		<script>
+			function closeModal() {
+				var container = document.getElementById("modals_here");
+				var backdrop = document.getElementById("modal-backdrop");
+				var modal = document.getElementById("modal");
+
+				modal.classList.remove("show");
+				backdrop.classList.remove("show");
+
+				setTimeout(function () {
+					container.removeChild(backdrop);
+					container.removeChild(modal);
+				}, 200);
+			}
+		</script>
+		<script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+</body>
+</body>
+
+</html>

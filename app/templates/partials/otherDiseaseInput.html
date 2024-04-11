@@ -1,0 +1,31 @@
+<!-- <div id="other_disease_input_block" class="row g-3 align-items-center align-items-end">
+    <label for="other_disease" class="form-label"></label>
+    <div class="col-9">
+        <input type="text" name="OtherDiseaseName" id="other_disease" class="other_disease form-control"
+             hx-get="/add" hx-target="#other_disease_block" hx-swap="beforeend">
+    </div>
+    <div class="col-3">
+        <button type="button" class="btn btn-secondary col-auto" hx-post="/add"
+            hx-target="closest #other_disease_input_block" hx-swap="delete">刪除</button>
+    </div>
+</div> -->
+<div class="row justify-content-around pt-4" id="delete_other_disease">
+    <div class="col-5">
+        <div class="row">
+            <div class="col-10">
+                <label class="visually-hidden" for="inlineFormInputGroupUsername">其他疾病</label>
+                <div class="input-group">
+                    <input type="text" name="OtherDiseaseName" class="form-control" id="inlineFormInputGroupUsername"
+                        placeholder="其他疾病" maxlength="40" />
+                </div>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-primary btn-floating" hx-get="/delete" hx-target="closest #delete_other_disease" hx-swap="delete">
+                    <i class="fas fa-minus fa-2x"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-5"></div>
+</div>
+

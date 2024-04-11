@@ -1,0 +1,55 @@
+<div hx-target="this" hx-swap="outerHTML">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between">
+            <h4><b>常見用藥和頻率</b></h4><!-- {% if session_account_id == visit.FK_AccountID %}<button hx-get="/updateMedicine/{{patient_id}}/{{visit.VisitDate}}"
+                class="btn btn-primary">編輯</button>{% endif %} -->
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <label for="pyridostigmine" class="col-form-label">大力丸(Pyridostigmine)</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="pyridostigmine"
+                    value="{{visit.Pyridostigmine}}" readonly>
+            </div>
+            <div class="col">
+                <label for="compesolone" class="col-form-label">類固醇(Compesolone)</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="compesolone"
+                    value="{{visit.Compesolone}}" readonly>
+            </div>
+            <div class="col">
+                <label for="cellcept" class="col-form-label">山喜多(Cellcept)</dlabel>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="cellcept"
+                    value="{{visit.Cellcept}}" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <label for="imuran" class="col-form-label">移護寧(Imuran)</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="imuran"
+                    value="{{visit.Imuran}}" readonly>
+            </div>
+            <div class="col">
+                <label for="prograf" class="col-form-label">普洛可富(Prograf)</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="prograf"
+                    value="{{visit.Prograf}}" readonly>
+            </div>
+            <div class="col">
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    </div>
+
+
+</div>

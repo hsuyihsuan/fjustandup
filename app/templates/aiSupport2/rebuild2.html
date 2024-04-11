@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>上傳頁面</title>
+    <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">重新建模</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="d-flex justify-content-end">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/control">回控制頁面</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/aiControl2">回上頁</a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link active" href="/model">model</a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+        <select></select>
+
+        <div class="card container col-12 col-sm-8 col-md-10 p-4 shadow-sm mt-5">
+            <div class="row">
+                <div class="col-sm-6">
+                  <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">目前使用模型指標</h3>
+                        <h5>資料比數: 共{{ origin_amount }}筆</h5>
+                        <h5>混淆矩陣</h5>
+                        <img src="ML_modeling/img/original_cm.png" class="img-thumbnail" alt="...">
+                        <h5>各項指標</h5>
+                        <img src="ML_modeling/img/original_ref.png" class="img-thumbnail" alt="...">
+                        <h5>決策樹</h5>
+                        <img src="ML_modeling/img/original_tree.png" class="img-thumbnail" alt="...">
+                        <p></p>
+                        <a href="/keep" class="btn btn-primary">繼續使用舊模型</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card">
+                      <div class="card-body">
+                        <h3 class="card-title">重新搭建之AI模型</h3>
+                        <h5>資料比數: 共{{ new_amount }}筆</h5>
+                        <h5>混淆矩陣</h5>
+                        <img src="ML_modeling/img/new_cm.png" class="img-thumbnail" alt="...">
+                        <h5>各項指標</h5>
+                        <img src="ML_modeling/img/new_ref.png" class="img-thumbnail" alt="...">
+                        <h5>決策樹</h5>
+                        <img src="ML_modeling/img/new_tree.png" class="img-thumbnail" alt="...">
+                        <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
+                        <p></p>
+                        <a href="/rebuild_checked" class="btn btn-primary">使用新的模型</a>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+        </div>
+</body>
+
+</html>

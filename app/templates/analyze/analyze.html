@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>病歷分析</title>
+    <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+    <!-- <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet"> -->
+    <link href="{{ url_for('static', path='/assets/css/style2.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/echarts.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/DataTables/datatables.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+</head>
+
+<body class="show-sidebar">
+    <aside class="sidebar">
+        <div class="toggle">
+            <a href="#" class="burger js-menu-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span></span>
+            </a>
+        </div>
+        <div class="side-inner">
+
+            <div class="profile">
+                <button class="btn btn-outline-dark btn-lg mt-2" data-mdb-ripple-color="dark">病歷分析統計圖表</button>
+            </div>
+
+
+            <div class="nav-menu">
+                <ul>
+                    <!-- <li><a href="/control"><span class="icon-notifications mr-3"></span>回到控制介面</a></li>
+                    <li><a href="/manage"><span class="icon-notifications mr-3"></span>回到管理病歷</a></li> -->
+                    <li><a href="#sex_block" class="text-center"><span class="icon-notifications mr-3"></span>性別分布</a>
+                    </li>
+                    <li><a href="#age_block" class="text-center"><span class="icon-location-arrow mr-3"></span>年紀分布</a>
+                    </li>
+                    <li><a href="#age_at_onset_block" class="text-center"><span
+                                class="icon-pie-chart mr-3"></span>發病年紀分布</a>
+                    </li>
+                    <li><a href="#disease_duration_block" class="text-center"><span
+                                class="icon-pie-chart mr-3"></span>發病時長分布</a></li>
+                    <li><a href="#in_hospital_block" class="text-center"><span class="icon-pie-chart mr-3"></span>住院總次數分布</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </aside>
+    <main style="z-index: 0;">
+        <nav class="navbar navbar-expand-lg navbar bg-primary" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand ms-5" href="#"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="d-flex justify-content-end">
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active text-white" aria-current="page" href="/control">回控制頁面</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active text-white" href="/manage">回管理病歷</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active text-white" href="/aiControl">回AI模式管理</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        {% if all_patient_sex %}
+        <div class="card container col-10 col-sm-8 col-md-8 p-4 shadow-sm mt-5" id="sex_block">
+            <div class="card-body row justify-content-center">
+                <div id="sex_distribute" style="width: 700px; height: 500px"></div>
+                <table id="sex_table" class="cell-border table table-hover table-bordered text-nowrap align-middle"
+                    style="width:100%">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th>性別</th>
+                            <th>病歷人數</th>
+                            <th>比率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>男性</td>
+                            <td>{{all_patient_sex[0]}}</td>
+                            <td>{{'{:.2f}'.format(all_patient_sex[2])}} %</td>
+                        </tr>
+                        <tr>
+                            <td>女性</td>
+                            <td>{{all_patient_sex[1]}}</td>
+                            <td>{{'{:.2f}'.format(all_patient_sex[3])}} %</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+        <div class="card container col-10 col-sm-8 col-md-8 p-4 shadow-sm mt-5" id="age_block">
+            <div class="card-body row justify-content-center">
+                <div id="age_distribute" style="width: 700px; height: 500px"></div>
+                <table id="age_table" class="age cell-border table table-hover table-bordered text-nowrap align-middle"
+                    style="width:100%">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th>年齡區間</th>
+                            <th>男性</th>
+                            <th>女性</th>
+                            <th>總數</th>
+                            <th>年齡占比</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(10) %}
+                        <tr>
+                            <td>{{10*i}} ~ {{10*i+9}}歲</td>
+                            <td>{{all_patient_age[i]}}</td>
+                            <td>{{all_patient_age[i+10]}}</td>
+                            <td>{{all_patient_age[i+20]}}</td>
+                            <td>{{'{:.2f}'.format(all_patient_age[i+30])}} %</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+        <div class="card container col-10 col-sm-8 col-md-8 p-4 shadow-sm mt-5" id="age_at_onset_block">
+            <div class="card-body row justify-content-center">
+                <div id="age_at_onset_distribute" style="width: 700px; height: 500px"></div>
+                <table id="age_table" class="age cell-border table table-hover table-bordered text-nowrap align-middle"
+                    style="width:100%">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th>年齡區間</th>
+                            <th>男性</th>
+                            <th>女性</th>
+                            <th>總數</th>
+                            <th>年齡占比</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(10) %}
+                        <tr>
+                            <td>{{10*i}} ~ {{10*i+9}}歲</td>
+                            <td>{{all_patient_age_at_onset[i]}}</td>
+                            <td>{{all_patient_age_at_onset[i+10]}}</td>
+                            <td>{{all_patient_age_at_onset[i+20]}}</td>
+                            <td>{{'{:.2f}'.format(all_patient_age_at_onset[i+30])}} %</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="card container col-10 col-sm-8 col-md-8 p-4 shadow-sm mt-5" id="disease_duration_block">
+            <div class="card-body row justify-content-center">
+                <div id="disease_duration" style="width: 900px; height: 500px"></div>
+                <table id="disease_duration_table" class="cell-border table table-hover table-bordered text-nowrap align-middle"
+                    style="width:100%">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th>性別</th>
+                            <th>平均時長(月)</th>
+                            <th>標準差(月)</th>
+                            <th>最大值(月)</th>
+                            <th>最小值(月)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>總計</td>
+                            <td>{{'{:.2f}'.format(all_sex_disease_duration_stat[0])}}</td>
+                            <td>{{'{:.2f}'.format(all_sex_disease_duration_stat[1])}}</td>
+                            <td>{{all_sex_disease_duration_stat[2]}}</td>
+                            <td>{{all_sex_disease_duration_stat[3]}}</td>
+                        </tr>
+                        <tr>
+                            <td>男性</td>
+                            <td>{{'{:.2f}'.format(all_male_disease_duration_stat[0])}}</td>
+                            <td>{{'{:.2f}'.format(all_male_disease_duration_stat[1])}}</td>
+                            <td>{{all_male_disease_duration_stat[2]}}</td>
+                            <td>{{all_male_disease_duration_stat[3]}}</td>
+                        </tr>
+                        <tr>
+                            <td>女性</td>
+                            <td>{{'{:.2f}'.format(all_female_disease_duration_stat[0])}}</td>
+                            <td>{{'{:.2f}'.format(all_female_disease_duration_stat[1])}}</td>
+                            <td>{{all_female_disease_duration_stat[2]}}</td>
+                            <td>{{all_female_disease_duration_stat[3]}}</td>
+                        </tr>
+                    
+                    
+                    
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="card container col-10 col-sm-8 col-md-8 p-4 shadow-sm mt-5" id="in_hospital_block">
+            <div class="card-body row justify-content-center">
+                <div id="in_hospital" style="width: 900px; height: 600px"></div>
+                <table id="in_hospital_table" class="cell-border table table-hover table-bordered text-nowrap align-middle"
+                    style="width:100%">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th>性別</th>
+                            <th>平均住院總次數</th>
+                            <th>標準差</th>
+                            <th>最大值</th>
+                            <th>最小值</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>總計</td>
+                            <td>{{all_sex_in_hospital_stat[0]}}</td>
+                            <td>{{all_sex_in_hospital_stat[1]}}</td>
+                            <td>{{all_sex_in_hospital_stat[2]}}</td>
+                            <td>{{all_sex_in_hospital_stat[3]}}</td>
+                        </tr>
+                        <tr>
+                            <td>男性</td>
+                            <td>{{all_male_in_hospital_stat[0]}}</td>
+                            <td>{{all_male_in_hospital_stat[1]}}</td>
+                            <td>{{all_male_in_hospital_stat[2]}}</td>
+                            <td>{{all_male_in_hospital_stat[3]}}</td>
+                        </tr>
+                        <tr>
+                            <td>女性</td>
+                            <td>{{all_female_in_hospital_stat[0]}}</td>
+                            <td>{{all_female_in_hospital_stat[1]}}</td>
+                            <td>{{all_female_in_hospital_stat[2]}}</td>
+                            <td>{{all_female_in_hospital_stat[3]}}</td>
+                        </tr>
+                    
+                    
+                    
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+    {% include "analyze/analyzeScript.html" %}
+    <script src="{{ url_for('static', path='/assets/javascript/sidebar.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sex_table').DataTable({
+                info: false,
+                paging: false,
+                searching: false,
+                columnDefs: [
+                    {
+                        targets: [0, 1, 2],
+                        className: 'dt-head-center',
+                    },
+                    {
+                        targets: [0, 1, 2],
+                        className: 'dt-body-center',
+                    }
+                ]
+
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.age').DataTable({
+                info: false,
+                paging: false,
+                searching: false,
+                order: [[3, 'desc']],
+                columnDefs: [
+                    {
+                        targets: [0, 1, 2, 3, 4],
+                        className: 'dt-head-center',
+                    },
+                    {
+                        targets: [0, 1, 2, 3, 4],
+                        className: 'dt-body-center',
+                    }
+                ]
+
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#disease_duration_table').DataTable({
+                info: false,
+                paging: false,
+                searching: false,
+                order: [[0, 'desc']],
+                columnDefs: [
+                    {
+                        targets: [0, 1, 2, 3, 4],
+                        className: 'dt-head-center',
+                    },
+                    {
+                        targets: [0, 1, 2, 3, 4],
+                        className: 'dt-body-center',
+                    }
+                ]
+
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#in_hospital_table').DataTable({
+                info: false,
+                paging: false,
+                searching: false,
+                order: [[0, 'desc']],
+                columnDefs: [
+                    {
+                        targets: [0, 1, 2, 3, 4],
+                        className: 'dt-head-center',
+                    },
+                    {
+                        targets: [0, 1, 2, 3, 4],
+                        className: 'dt-body-center',
+                    }
+                ]
+
+            });
+        });
+    </script>
+    <script src="{{ url_for('static', path='/assets/javascript/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    {% else %}
+    <h1 class="text-center mt-4"><strong>目前病歷資料不足統計<br>(至少2位男性和2位女性)</strong></h1>
+    {% endif %}
+</body>
+
+</html>

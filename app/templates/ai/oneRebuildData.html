@@ -1,0 +1,112 @@
+<form id="modal-backdrop" hx-swap="outerHTML">
+    <div class="modal-backdrop fade show" style="display:block;"></div>
+    <div id="modal" class="modal fade show" tabindex="-1" style="display:block;">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">當次建模資料</h5>
+                </div>
+                <div class="modal-body" style="overflow-x: auto;">
+                    <div class="container">
+
+                        <table id="example" class="table table-hover" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Index</th>
+                                    <th>Gender</th>
+                                    <th>MGFA</th>
+                                    <th>Ptosis</th>
+                                    <th>Diplopia</th>
+                                    <th>Dysphasia</th>
+                                    <th>Dysarthria</th>
+                                    <th>Dyspnea</th>
+                                    <th>LimbWeakness</th>
+                                    <th>Pyridostigmine</th>
+                                    <th>Compesolone</th>
+                                    <th>DiseaseDurationMonths</th>
+                                    <th>AgeAtOnset</th>
+                                    <th>InHospitalCount</th>
+                                    <th>Hyperplasia</th>
+                                    <th>Thymoma</th>
+                                    <th>Hospitalization</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in rebuild_data %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ i.PatientSex }}</td>
+                                    <td>{{ i.MGFA_Classification }}</td>
+                                    <td>{{ i.Ptosis }}</td>
+                                    <td>{{ i.Diplopia }}</td>
+                                    <td>{{ i.Dysphasia }}</td>
+                                    <td>{{ i.Dysarthria }}</td>
+                                    <td>{{ i.Dyspnea }}</td>
+                                    <td>{{ i.LimbWeakness }}</td>
+                                    <td>{{ i.Pyridostigmine }}</td>
+                                    <td>{{ i.Compesolone }}</td>
+                                    <td>{{ i.DiseaseDurationMonths }}</td>
+                                    <td>{{ i.AgeAtOnset }}</td>
+                                    <td>{{ i.InHospitalCount }}</td>
+                                    <td>{{ i.Hyperplasia }}</td>
+                                    <td>{{ i.Thymoma }}</td>
+                                    <td style="background-color: antiquewhite;">{{ i.Hospitalization }}</td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row justify-content-around">
+                        <div class="col-6">
+                            <div id="sex_{{create_time}}" style="height: 65vh"></div>
+                        </div>
+                        <div class="col-6">
+                            <div id="mgfa_{{create_time}}" style="height: 65vh"></div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around">
+                        <div class="col-5">
+                            <div id="symptom" style="height: 65vh"></div>
+                        </div>
+                        <div class="col-5">
+                            <div id="medicine" style="height: 65vh"></div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around mt-5">
+                        <div class="col-12">
+                            <div id="disease_duraion_months" style="height: 55vh;"></div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around mt-4">
+                        <div class="col-12">
+                            <div id="age_at_onset" style="height: 55vh;"></div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around mt-4">
+                        <div class="col-12">
+                            <div id="in_hospital_count" style="height: 55vh;"></div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around mt-4">
+                        <div class="col-11">
+                            <div id="ct_and_hospitalizaion" style="height: 60vh;"></div>
+                        </div>
+                    </div>
+                </div>
+                {% include "partials/figure/aiScript.html"%}
+                <div class="modal-footer justify-content-center">
+                
+
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">關閉</button>
+                </div>
+            
+            </div>
+      
+        </div>
+        
+    </div>
+</form>

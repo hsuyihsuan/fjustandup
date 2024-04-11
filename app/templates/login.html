@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>登入</title>
+    <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="{{ url_for('static', path='/assets/javascript/sweetalert2.all.min.js') }}"></script>
+    <style>
+        .divider:after,
+        .divider:before {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .h-custom {
+            height: calc(100% - 73px);
+        }
+
+        @media (max-width: 450px) {
+            .h-custom {
+                height: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="vh-100">
+        <div class="container-fluid h-custom">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-md-9 col-lg-6 col-xl-5">
+                    <img src="/static/assets/img/draw2.webp" class="img-fluid" alt="Sample image">
+                </div>
+                <div class="col-md-8 col-lg-5 col-xl-4 offset-xl-1 card p-3">
+                    <p class="lead fs-4"><strong>肌無力症病歷管理系統</strong></hp>
+                    <form action="/login" method="post" class="needs-validation" novalidate>
+
+                        <div class="form-outline mb-3">
+                            <input type="text" name="AccountName" id="form3Example3"
+                                class="form-control form-control-lg {% if wrong %}is-invalid{% endif %}"
+                                placeholder="Enter your account" maxlength="35" required>
+                            <label class="form-label" for="form3Example3"><i class="fas fa-circle-user"></i> 帳號</label>
+                        </div>
+                        <div class="form-outline mb-3">
+                            <input type="password" name="Password" id="form3Example4"
+                                class="form-control form-control-lg {% if wrong %}is-invalid{% endif %}"
+                                placeholder="Enter password" required>
+                            <label class="form-label" for="form3Example4"><i class="fas fa-key"></i> 密碼</label>
+                            <div class="invalid-feedback">帳密錯誤或尚未開通</div>
+                        </div>
+                        <!-- <div class="d-flex justify-content-between align-items-center">
+                            <a href="#!" class="text-body">Forgot password?</a>
+                        </div> -->
+
+                        <div class="text-center text-lg-start mt-4 pt-2">
+                            <button type="submit" class="btn btn-primary btn-lg"
+                                style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </section>
+    <!-- <a href="/signup" class="text-center mt-3">未有帳號？點此註冊</a> -->
+    {% if wrong %}<!--<h2 class="text-center ms-2 mt-3 text-danger fw-bold">帳密錯誤!</h2>--> {% endif %}
+    {% if verify %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: '帳號驗證成功',
+            text: '請重新登入確認啟用狀態'
+        })
+    </script>
+
+    {% endif %}
+    {% if close %}
+    <script>
+        Swal.fire({
+            icon: 'warning',
+            title: '該帳號已停用',
+            text: '若此情形不合您想像，請至行政室確認'
+        })
+    </script>
+    {% endif %}
+
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    <script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (() => {
+                'use strict';
+
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                const forms = document.querySelectorAll('.needs-validation');
+
+                // Loop over them and prevent submission
+                Array.prototype.slice.call(forms).forEach((form) => {
+                    form.addEventListener('submit', (event) => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            })();
+    </script>
+</body>
+
+</html>

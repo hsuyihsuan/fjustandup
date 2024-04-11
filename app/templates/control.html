@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>控制頁面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        body,
+        html {
+            height: 100%;
+           
+        }
+
+        .bg {
+            /* The image used */
+            background-image: url("/static/assets/img/control_background.png");
+
+            /* Full height */
+            height: 100%;
+
+            /* Center and scale the image nicely */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+       
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg">
+        <div class="container">
+            <div class="row justify-content-center p-3">
+                <div class="col-lg-6 card rounded-8{% if session_now == 'clerk' %}mt-5{% endif %}">
+                    <div class="text-center p-4">
+                        {% if session_now == 'clerk' %}
+                        <i class="fas fa-hospital-user fa-5x"></i>
+                        <p class="lead">醫院行政</h4>
+                            {% elif session_now == 'doctor' %}
+                            <i class="fas fa-user-doctor fa-5x"></i>
+                        <p class="lead">醫師</h4>
+                            {% endif %}
+                            <!-- <a href="#" class="link-primary text-decoration-none">個人設置</a> -->
+                    </div>
+                    <div class="d-grid gap-2 col-10 mx-auto">
+                        {% if session_now == 'clerk' %}
+                        <!-- <a href="/add" class="btn btn-outline-primary btn-rounded fs-5" data-mdb-ripple-color="primary"><strong>新增病歷</strong></a> -->
+                        <!-- <a href="/manage" class="btn btn-outline-primary btn-rounded fs-5" data-mdb-ripple-color="primary"><strong>管理病歷</strong></a> -->
+                        <a href="/patientManage" class="btn btn-outline-primary btn-rounded fs-5"
+                            data-mdb-ripple-color="primary"><strong>病歷管理</strong></a>
+                        <a href="/accountManage" class="btn btn-outline-primary btn-rounded fs-5"
+                            data-mdb-ripple-color="primary"><strong>帳號管理</strong></a>
+                            <a type="button" href="/activity" class="btn btn-outline-success btn-rounded fs-5"
+                            data-mdb-ripple-color="success"><strong>活動紀錄</strong></a>
+                        <!-- <a href="/analyze" class="btn btn-outline-success btn-rounded fs-5" data-mdb-ripple-color="success"><strong>病歷分析</strong></a> -->
+                        <!-- <a href="/aiControl" class="btn btn-outline-danger btn-rounded fs-5" data-mdb-ripple-color="dark"><strong>AI模式管理</strong></a> -->
+                        {% elif session_now == 'doctor' %}
+                        <a type="button" href="/add" class="btn btn-outline-primary btn-rounded fs-5"
+                            data-mdb-ripple-color="primary"><strong>新增就診資料</strong></a>
+                        <a type="button" href="/manage" class="btn btn-outline-primary btn-rounded fs-5"
+                            data-mdb-ripple-color="primary"><strong>管理就診資料</strong></a>
+                        <a type="button" href="/analyze" class="btn btn-outline-success btn-rounded fs-5"
+                            data-mdb-ripple-color="success"><strong>病歷分析</strong></a>
+                        <a type="button" href="/aiControl" class="btn btn-outline-danger btn-rounded fs-5"
+                            data-mdb-ripple-color="danger"><strong>AI模式管理</strong></a>
+                        {% elif session_now == 'guest' %}
+                        <a type="button" href="/manage" class="btn btn-primary btn-block btn-rounded">管理病歷</a>
+                        <a type="button" href="/analyze" class="btn btn-success btn-block btn-rounded">病歷分析</a>
+                        {% endif %}
+                    </div>
+                    <p class="text-center mt-3">
+                        <a href="/logout" class="btn btn-outline-dark btn-lg" data-mdb-ripple-color="dark">登出</a>
+                    </p>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+</body>
+
+</html>

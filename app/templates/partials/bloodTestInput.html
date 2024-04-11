@@ -1,0 +1,43 @@
+<div id="blood_test_input" class="pt-2">
+    <div class="row justify-content-around">
+        <div class="col-5">
+            <label for="achr">AchR抗體(nmol/mL)</label>
+            <input type="range" name="AchR" id="achr" class="range form-range" min="0.00"
+                max="1.00" step="0.01" oninput="achr_number.value=value">
+            <input type="number" name="AchR" id="achr_number" class="form-control text-center" min="0.00"
+            max="1.00" step="0.01" oninput="achr.value=value">
+        </div>
+        <div class="col-5">
+            <label for="tsh">TSH(uIU/mL)</label>
+            <input type="range" name="TSH" id="tsh" class="range form-range" min="0.0" max="50.0" step="0.1"
+                oninput="tsh_number.value=value">
+            <input type="number" name="TSH" id="tsh_number" class="form-control text-center" min="0.0" max="50.0" step="0.1" oninput="tsh.value=value">
+        </div>
+    </div>
+    <div class="row justify-content-around pt-3">
+        <div class="col-5">
+            <label for="free_thyroxine">fT4(ng/dL)</label>
+            <input type="range" name="FreeThyroxine" id="free_thyroxine" class="range form-range" min="0.0" max="10.0" step="0.1"
+                oninput="free_thyroxine_number.value=value">
+            <input type="number" name="FreeThyroxine" id="free_thyroxine_number" class="form-control text-center" min="0.0" max="10.0" step="0.1"
+                oninput="free_thyroxine.value=value">
+        </div>
+        <div class="col-5">
+            <label for="ana">ANA(1:X)</label>
+            <input type="range" name="ANA" id="ana" class="range form-range" min="1" max="2560"
+                oninput="ana_number.value=value">
+            <input type="number" name="ANA" id="ana_number" class="form-control text-center" min="1" max="2560"
+                oninput="ana.value=value">
+        </div>
+    </div>
+    <div class="row justify-content-around py-3">
+        <div class="col-5">
+            <label for="uric_acid">Uric acid(mg/dL)</label>
+            <input type="range" name="UricAcid" id="uric_acid" class="range form-range" min="0.0" max="50.0" step="0.1"
+                oninput="uric_acid_number.value=value">
+            <input type="number" name="UricAcid" id="uric_acid_number" class="form-control text-center" min="0.0" max="50.0" step="0.1"
+                oninput="uric_acid.value=value">
+        </div>
+        <div class="col-5"></div>
+    </div>
+</div>

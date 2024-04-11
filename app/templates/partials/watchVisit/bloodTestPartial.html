@@ -1,0 +1,50 @@
+<div id="blood_test_input">
+    <div class="container mt-3">
+        <div class="row mt-3">
+            <div class="col">
+                <label for="AchR" class="col-form-label">AchR抗體</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="AchR"
+                    value="{% if one_blood_test.AchR > 0 %}{{'{:.2f}'.format(one_blood_test.AchR)}}{% else %}未收集{% endif %}" readonly>
+            </div>
+            <div class="col">
+                <label for="tsh" class="col-form-label">TSH</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="tsh"
+                    value="{% if one_blood_test.TSH > 0 %}{{'{:.2f}'.format(one_blood_test.TSH)}}{% else %}未收集{% endif %}" readonly>
+            </div>
+            <div class="col">
+                <label for="fT4" class="col-form-label">fT4</dlabel>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="fT4"
+                    value="{% if one_blood_test.FreeThyroxine > 0 %}{{'{:.1f}'.format(one_blood_test.FreeThyroxine)}}{% else %}未收集{% endif %}" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <label for="ANA" class="col-form-label">ANA</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="ANA"
+                    value="{% if one_blood_test.ANA > 0 %}{{one_blood_test.ANA}}{% else %}未收集{% endif %}" readonly>
+            </div>
+            <div class="col">
+                <label for="uric_acid" class="col-form-label">UricAcid</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control text-center" id="uric_acid"
+                    value="{% if one_blood_test.UricAcid > 0 %}{{'{:.1f}'.format(one_blood_test.UricAcid)}}{% else %}未收集{% endif %}" readonly>
+            </div>
+            <div class="col">
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,10 @@
+{% if other_job == 'other' or (account.Job != 'doctor' and account.Job != 'nurse') %}
+<div class="row justify-content-center mt-3" id="job_name">
+    <div class="col-md-3 col-form-label">
+        <label for="other">其他職稱</label>
+    </div>
+    <div class="col-md-9">
+        <input type="text" min="1" max="20" name="Job" class="form-control" id="other" value="{% if account.Job != 'doctor' and account.Job != 'nurse' %}{{account.Job}}{% endif %}">
+    </div>
+</div>
+{% endif %}

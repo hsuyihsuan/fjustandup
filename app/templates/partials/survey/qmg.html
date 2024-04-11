@@ -1,0 +1,28 @@
+<div id="qmg_input" hx-target="this" hx-swap="outerHTML">
+    <div class="container">
+        <div class="row justify-content-between">
+            {% if watch %}
+            <div class="col-10">
+                <select class="form-select bg-light mt-3" aria-label="Default select example" name="qmg_date"
+                    hx-get="/getSurvey" hx-target="#qmg_input" hx-swap="outerHTML" hx-include="[name=patient_id]">
+                    {% for i in all_qmg_dates|reverse %}
+                    <option value="{{i}}" {% if i == qmg_date %} selected {% endif %}>{{i}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            <div class="col-2">
+                {% if watch %}
+                <!-- <div class="d-flex justify-content-end">
+                    <button hx-get="/updateQMG/{{patient_id}}/{{qmg_date}}"
+                        class="btn btn-primary my-3 me-2">編輯</button>
+                </div> -->
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+    {% include "partials/watchVisit/survey/qmgPartial.html" %}
+</div>

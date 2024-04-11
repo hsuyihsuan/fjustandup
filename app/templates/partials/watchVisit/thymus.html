@@ -1,0 +1,37 @@
+<div hx-target="this" hx-swap="outerHTML">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between mt-4 mb-2">
+            <h4><b>單次紀錄選擇</b></h4>
+        </div>
+        <div class="row justify-content-between">
+            <div class="col-10">
+                <select class="form-select bg-light" aria-label="Default select example" name="thymus_date"
+                    hx-get="/getThymusOrBloodTest" 
+                    hx-include="[name=patient_id]">
+                    {% for i in all_thymus_dates|reverse %}
+                    <option value="{{i}}" {% if i == thymus_date %} selected {% endif %}>{{i}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <!-- {% if session_account_id == one_thymus.FK_AccountID %}
+                <button hx-get="/updateThymus/{{one_thymus.FK_PatientID}}/{{thymus_date}}"
+                    class="btn btn-primary ms-5">編輯</button>
+                {% endif %} -->
+                <!-- {% if session_account_id == one_thymus.FK_AccountID %}
+                <div class="col-2 d-flex justify-content-end">
+                    <button hx-get="/updateThymus/{{one_thymus.FK_PatientID}}/{{thymus_date}}" hx-target="#modal_thymus_block" 
+                    hx-trigger="click" _="on htmx:afterOnLoad wait 10ms then add .show to #modal4 then add .show to #modal-backdrop4" class="btn btn-primary">編輯</button>
+                </div>
+                {% endif %} -->
+            </div>
+        </div>
+
+    </div>
+
+    {% include "partials/watchVisit/thymusPartial.html" %}
+
+
+
+
+</div>

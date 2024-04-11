@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增複診病歷</title>
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+    <!-- <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet"> -->
+    <link href="{{ url_for('static', path='/assets/css/style.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/_hyperscript.min.js') }}"></script>
+
+    <link href="{{ url_for('static', path='/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/DataTables/datatables.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet"> -->
+</head>
+
+<body class="show-sidebar">
+    <form method="post" action="/addHasVisited" class="needs-validation" novalidate>
+        <aside class="sidebar">
+            <div class="toggle">
+                <a href="#" class="burger js-menu-toggle" data-toggle="collapse" data-target="#main-navbar">
+                    <span></span>
+                </a>
+            </div>
+            <div class="side-inner">
+
+                <div class="ps-3">
+                    <!-- <img src="images/person_4.jpg" alt="Image" class="img-fluid"> -->
+                    <h3 class="name">病歷小卡</h3>
+                    <div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-6">
+                                姓名: {{patient.PatientName}}
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-6">
+                                性別: {% if patient.PatientSex %} 男 {% else %} 女 {% endif %}
+                            </div>
+                            <div class="col-6">
+                                年齡: {{patient_age}}
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-6">
+                                <label for="patient_height" class="form-label">身高(cm)</label>
+                                <input type="number" name="Height" id="patient_height" class="form-control"
+                                    value="{{'{:.1f}'.format(visit.Height)}}" min="30" max="240" step="0.1">
+                                <div class="invalid-feedback">30 ~ 240 cm </div>
+
+                            </div>
+                            <div class="col-6">
+                                <label for="weight" class="form-label">體重(kg)</label>
+                                <input type="number" name="Weight" id="weight_number" class="form-control"
+                                    value="{{'{:.1f}'.format(visit.Weight)}}" min="5" max="160" step="0.1">
+                                <div class="invalid-feedback">5 ~ 160 kg </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                發病日期: {{patient.AttackDate}}
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                發病年紀: {{age_of_onset}} 歲
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                發病時長: {{days_of_onset}} 天
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                發病初始症狀:
+                                {% if patient.BeginSymptom == 0 %} 眼肌型
+                                {% elif patient.BeginSymptom == 1 %} 口咽型
+                                {% else %} 四肢型
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                最近本院住院日期:
+                                {% if in_hospital_date %} {{in_hospital_date}} {% else %} 尚無紀錄 {% endif %}
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                {% if in_hospital_count %} 本院住院總次數: {{in_hospital_count}} {% endif %}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                首次胸腺萎縮日期: {% if first_time_thymus_atrophy %} {{first_time_thymus_atrophy}} {% else %}
+                                未發現 {% endif %}
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                首次胸腺增生日期: {% if first_time_thymus_hyperplasia %} {{first_time_thymus_hyperplasia}} {%
+                                else %} 未發現 {% endif %}
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly">
+                            <div class="col-12">
+                                首次胸腺瘤日期: {% if first_time_thymus_thymoma %} {{first_time_thymus_thymoma}} {% else %} 未發現
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <span class="country">&nbsp;</span>
+
+                </div>
+
+
+                <div class="nav-menu">
+                    <ul>
+                        <li><a href="#basic_block"><span class="icon-notifications mr-3"></span>基本資料</a></li>
+                        <li><a href="#medicine_block"><span class="icon-location-arrow mr-3"></span>用藥資訊</a></li>
+                        <li><a href="#thymus_block"><span class="icon-pie-chart mr-3"></span>胸腺資訊</a></li>
+                        <li><a href="#blood_test_block"><span class="icon-pie-chart mr-3"></span>抗體抽血資訊</a></li>
+                        <li><a href="#qol_block"><span class="icon-pie-chart mr-3"></span>生活品質量表(QOL)</a></li>
+                        <li><a href="#qmg_block"><span class="icon-pie-chart mr-3"></span>QMG Score量表</a></li>
+                        <li><a href="#mg_composite_block"><span class="icon-pie-chart mr-3"></span>MG Composite量表</a>
+                        </li>
+                        <li><a href="#adl_block"><span class="icon-pie-chart mr-3"></span>日常生活量表(ADL)</a></li>
+                        <li><a href="#assessment_block"><span class="icon-pie-chart mr-3"></span>評估資訊</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </aside>
+
+
+
+        <main class="container col-10">
+            <div class="row justify-content-center">
+                <div class="d-flex justify-content-between pt-3">
+                    <div class="col-4"><a class="fs-4 fw-bold" href="/add">返回輸入病歷號</a></div>
+                    <div class="col-4 fs-4 fw-bold text-end pe-2" style="color: #EC407A">*此為複診病歷號碼</div>
+                </div>
+
+                <div class="container"
+                    style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+
+                    <div id="basic_block" class="row justify-content-center fs-1 fw-bold py-2">
+                        基本資料
+                    </div>
+                    <div class="row justify-content-around pt-4">
+                        <div class="col-5">
+                            <label for="patient_id" class="form-label">病歷號碼</label>
+                            <input type="text" name="PK_PatientID" id="patient_id" class="form-control"
+                                value="{{patient_id}}" readonly>
+                            <input type="hidden" name="FK_PatientID" id="patient_id_for_fk" value="{{patient_id}}">
+                            <input type="hidden" name="patient_id" value="{{patient_id}}">
+                            <input type="hidden" name="FK_AccountID" value="{{session_account_id}}">
+                        </div>
+                        <div class="col-5">
+                            <label for="visit_date" class="form-label">就診日期 (過去就診次數: {{visit_count}})</label>
+                            <input type="date" name="VisitDate" id="visit_date" class="form-control" value="{{today}}"
+                                min="{{min_input_date}}" max="{{today}}">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-around pt-4">
+                        <div id="visit_state" class="col-5">
+                            <div>
+                                就診狀態
+                            </div>
+                            <div class="row justify-content-evenly">
+                                <div class="form-check form-check-inline col-5">
+                                    <label for="just_visit" class="form-label">看診</label>
+                                    <input type="radio" name="check_if_in_hospital" id="just_visit"
+                                        class="form-check-input" value="0" _="on click remove #in_hospital_state"
+                                        checked>
+                                    <input type="hidden" name="Treat" value="0">
+                                </div>
+                                <div class="form-check form-check-inline col-5">
+                                    <label for="in_hospital" class="form-label">住院</label>
+                                    <input type="radio" name="check_if_in_hospital" id="in_hospital"
+                                        class="form-check-input" hx-get="/add" hx-target="#visit_state"
+                                        hx-swap="beforeend">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <table id="visit_date_table" class="display" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>就診日期紀錄</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in visit_record %}
+                                    <tr>
+                                        <td>{{i.VisitDate}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5 range">
+                            <label for="sbp">收縮壓</label>
+                            <input type="range" id="sbp" class="form-range" min="30" max="200" {% if visit.Sbp !=-1 %}
+                                value="{{visit.Sbp}}" {% endif %}s oninput="sbp_number.value=value">
+                            <input type="number" name="Sbp" id="sbp_number" class="form-control text-center" min="30"
+                                max="200" {% if visit.Sbp !=-1 %} value="{{visit.Sbp}}" {% endif %}
+                                oninput="sbp.value=value">
+                            <div class="invalid-feedback">收縮壓需介於 30 ~ 200 mmHg </div>
+                        </div>
+                        <div class="col-5 range">
+                            <label for="dbp">舒張壓</label>
+                            <input type="range" id="dbp" class="form-range" {% if visit.Sbp !=-1 %}
+                                value="{{visit.Dbp}}" {% endif %} min="1" max="140" oninput="dbp_number.value=value">
+                            <input type="number" name="Dbp" id="dbp_number" class="form-control text-center" min="1"
+                                max="140" {% if visit.Dbp !=-1 %} value="{{visit.Dbp}}" {% endif %}
+                                oninput="dbp.value=value">
+                            <div class="invalid-feedback">舒張壓需介於 1 ~ 140 mmHg </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-4">
+                        <div class="col-5">
+                            現有症狀
+                        </div>
+                        <div class="col-5">
+                            MGFA臨床分類
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-1">
+
+                        <div class="col-5">
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Ptosis" value="0">
+                                <input type="checkbox" name="Ptosis" id="ptosis" class="form-check-input" value="1" {%
+                                    if visit.Ptosis %} checked {% endif %}>
+                                <label for="ptosis" class="form-check-label">
+                                    眼瞼下垂
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Diplopia" value="0">
+                                <input type="checkbox" name="Diplopia" id="diplopia" class="form-check-input" value="1"
+                                    {% if visit.Diplopia %} checked {% endif %}>
+                                <label for="diplopia" class="form-check-label">
+                                    複視
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Dysphasia" value="0">
+                                <input type="checkbox" name="Dysphasia" id="dysphasia" class="form-check-input"
+                                    value="1" {% if visit.Dysphasia %} checked {% endif %}>
+                                <label for="dysphasia" class="form-check-label">
+                                    吞嚥困難
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Dysarthria" value="0">
+                                <input type="checkbox" name="Dysarthria" id="dysarthria" class="form-check-input"
+                                    value="1" {% if visit.Dysarthria %} checked {% endif %}>
+                                <label for="dysarthria" class="form-check-label">
+                                    講話不清
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="Dyspnea" value="0">
+                                <input type="checkbox" name="Dyspnea" id="dyspnea" class="form-check-input" value="1" {%
+                                    if visit.Dyspnea %} checked {% endif %}>
+                                <label for="dyspnea" class="form-check-label">
+                                    呼吸困難
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="hidden" name="LimbWeakness" value="0">
+                                <input type="checkbox" name="LimbWeakness" id="limb_weakness" class="form-check-input"
+                                    value="1" {% if visit.LimbWeakness %} checked {% endif %}>
+                                <label for="limb_weakness" class="form-check-label">
+                                    手腳無力
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="form-check form-check-inline">
+                                <label for="I" class="form-check-label">I</label>
+                                <input type="radio" name="MGFA_Classification" id="I" class="form-check-input" value="0"
+                                    {% if visit.MGFA_Classification==0 %} checked {% endif %}>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="IIA" class="form-check-label">IIA</label>
+                                <input type="radio" name="MGFA_Classification" id="IIA" class="form-check-input"
+                                    value="1" {% if visit.MGFA_Classification==1 %} checked {% endif %}>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="IIB" class="form-check-label">IIB</label>
+                                <input type="radio" name="MGFA_Classification" id="IIB" class="form-check-input"
+                                    value="2" {% if visit.MGFA_Classification==2 %} checked {% endif %}>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="IIIA" class="form-check-label">IIIA</label>
+                                <input type="radio" name="MGFA_Classification" id="IIIA" class="form-check-input"
+                                    value="3" {% if visit.MGFA_Classification==3 %} checked {% endif %}>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="IIIB" class="form-check-label">IIIB</label>
+                                <input type="radio" name="MGFA_Classification" id="IIIB" class="form-check-input"
+                                    value="4" {% if visit.MGFA_Classification==4 %} checked {% endif %}>
+                            </div>
+                            <br>
+                            <div class="form-check form-check-inline">
+                                <label for="IVA" class="form-check-label">IVA</label>
+                                <input type="radio" name="MGFA_Classification" id="IVA" class="form-check-input"
+                                    value="5" {% if visit.MGFA_Classification==5 %} checked {% endif %}>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="IVB" class="form-check-label">IVB</label>
+                                <input type="radio" name="MGFA_Classification" id="IVB" class="form-check-input"
+                                    value="6" {% if visit.MGFA_Classification==6 %} checked {% endif %}>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="V" class="form-check-label">V</label>
+                                <input type="radio" name="MGFA_Classification" id="V" class="form-check-input" value="7"
+                                    {% if visit.MGFA_Classification==7 %} checked {% endif %}>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row justify-content-around pt-3">
+                        <div class="col-5">
+                            <input type="hidden" name="InOtherHospitalCount" value="0">
+                            <label for="in_other_hospital_date" class="form-label">最近外院住院日期</label>
+                            {% if in_other_hospital_date %}
+                            <input type="date" name="InOtherHospitalDate" id="in_other_hospital_date"
+                                class="form-control" min="{{min_input_date}}" max="{{today}}"
+                                value="{{in_other_hospital_date}}" required>
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+
+                            {% else %}
+                            <input type="date" name="InOtherHospitalDate" id="in_other_hospital_date"
+                                class="form-control" min="{{min_input_date}}" max="{{today}}" hx-get="/add"
+                                hx-target="#in_other_hospital" hx-swap="outerHTML">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                            <!-- hx-headers='{"htmxHeader": "inOtherHospitalDate"}'    _="on change remove #in_other_hospital_count"-->
+                            {% endif %}
+                        </div>
+                        <div id="in_other_hospital" class="col-5">
+                            {% if patient.InOtherHospitalCount %}
+                            <div id="in_other_hospital_count">
+                                <label for="in_other_hospital_count_number" class="form-label">外院住院總次數</label>
+                                <input type="number" name="InOtherHospitalCount"
+                                    value="{{patient.InOtherHospitalCount}}" min="0" max="100"
+                                    id="in_other_hospital_count_number" class="form-control text-center">
+                                <div class="invalid-feedback">次數需介於 1 ~ 100次 </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row justify-content-around pt-4" id="add_other_disease">
+                        <div class="col-5">
+                            <div class="row">
+                                <div class="col-10">
+                                    <label class="visually-hidden" for="inlineFormInputGroupUsername">其他疾病</label>
+                                    <div class="input-group">
+                                        <input type="text" name="OtherDiseaseName" class="form-control"
+                                            id="inlineFormInputGroupUsername" placeholder="其他疾病" maxlength="40" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-primary btn-floating" hx-get="/add"
+                                        hx-target="#add_other_disease" hx-include="[name=OtherDiseaseName]"
+                                        hx-swap="afterend">
+                                        <i class="fas fa-plus fa-2x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+
+                        </div>
+                        <!-- <div class="col-3">
+                            <label for="other_disease" class="form-label">其他疾病</label>
+                            <input type="text" name="OtherDiseaseName" id="other_disease"
+                                class="other_disease form-control"> hx-get="/add" hx-target="#other_disease_block"
+                                    hx-include="[name=patient_id]" hx-swap="aftereend"
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary btn-floating">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="col-5">
+
+                        </div> -->
+                    </div>
+                    {% for i in other_disease %}
+                    <div class="row justify-content-around pt-4" id="other_disease_input_block">
+                        <div class="col-5">
+                            <div class="row">
+                                <div class="col-10">
+                                    <label class="visually-hidden" for="inlineFormInputGroupUsername">其他疾病</label>
+                                    <div class="input-group">
+                                        <input type="text" name="OtherDiseaseName" class="form-control"
+                                            id="inlineFormInputGroupUsername" placeholder="其他疾病" maxlength="40"
+                                            value="{{i[1]}}" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-primary btn-floating" hx-confirm="您確定要刪除嗎？"
+                                        hx-post="/add" hx-target="closest #other_disease_input_block" hx-swap="delete">
+                                        <i class="fas fa-minus fa-2x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="mb-4"></div>
+                </div>
+            </div>
+
+            <div class="container mt-5"
+                style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                <div class="row justify-content-center fs-1 fw-bold py-2" id="medicine_block">
+                    用藥資訊
+                </div>
+                <div class="row justify-content-around pt-3">
+                    <div class="col-11">
+                        <table id="medicine_table" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>就診日期</th>
+                                    <th>大力丸(Pyridostigmine)</th>
+                                    <th>類固醇(Compesolone)</th>
+                                    <th>山喜多(Cellcept)</th>
+                                    <th>移護寧(Imuran)</th>
+                                    <th>普洛可富(Prograf)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in visit_record %}
+                                <tr>
+                                    <td>{{i.VisitDate}}</td>
+                                    <td>{{i.Pyridostigmine}}</td>
+                                    <td>{{i.Compesolone}}</td>
+                                    <td>{{i.Cellcept}}</td>
+                                    <td>{{i.Imuran}}</td>
+                                    <td>{{i.Prograf}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row justify-content-around pt-4">
+                    <div class="col-5">
+                        <label for="pyridostigmine">大力丸(Pyridostigmine)</label>
+                        <input type="range" name="Pyridostigmine" id="pyridostigmine" class="form-range"
+                            value="{{visit.Pyridostigmine}}" min="0" max="9"
+                            oninput="pyridostigmine_number.value=value">
+                        <input type="number" name="Pyridostigmine" id="pyridostigmine_number" class="form-control"
+                            value="{{visit.Pyridostigmine}}" min="0" max="9" oninput="pyridostigmine.value=value">
+                        <div class="invalid-feedback">用藥需介於 0 ~ 9 顆</div>
+                    </div>
+                    <div class="col-5 range">
+                        <label for="compesolone">類固醇(Compesolone)</label>
+                        <input type="range" name="Compesolone" id="compesolone" class="form-range"
+                            value="{{visit.Compesolone}}" min="0" max="20" oninput="compesolone_number.value=value">
+                        <input type="number" name="Compesolone" id="compesolone_number" class="form-control"
+                            value="{{visit.Compesolone}}" min="0" max="20" oninput="compesolone.value=value">
+                        <div class="invalid-feedback">用藥需介於 0 ~ 20 顆</div>
+                    </div>
+                </div>
+                <div class="row justify-content-around pt-3">
+                    <div class="col-5 range">
+                        <label for="cellcept">山喜多(Cellcept)</label>
+                        <input type="range" name="Cellcept" id="cellcept" class="form-range"
+                            value="{{visit.Cellcept}}" min="0" max="9" oninput="cellcept_number.value=value">
+                        <input type="number" name="Cellcept" id="cellcept_number" class="form-control"
+                            value="{{visit.Cellcept}}" min="0" max="9" oninput="cellcept.value=value">
+                        <div class="invalid-feedback">用藥需介於 0 ~ 9 顆</div>
+                    </div>
+                    <div class="col-5 range">
+                        <label for="imuran">移護寧(Imuran)</label>
+                        <input type="range" name="Imuran" id="imuran" class="range form-range" value="{{visit.Imuran}}"
+                            min="0" max="9" oninput="imuran_number.value=value">
+                        <input type="number" name="Imuran" id="imuran_number" class="form-control"
+                            value="{{visit.Imuran}}" min="0" max="9" oninput="imuran.value=value">
+                        <div class="invalid-feedback">用藥需介於 0 ~ 9 顆</div>
+                    </div>
+                </div>
+                <div class="row justify-content-around pt-3">
+                    <div class="col-5 range">
+                        <label for="imuran">普洛可富(Prograf)</label>
+                        <input type="range" name="Prograf" id="prograf" class="form-range"
+                            value="{{visit.Prograf}}" min="0" max="9" oninput="prograf_number.value=value">
+                        <input type="number" name="Prograf" id="prograf_number" class="form-control"
+                            value="{{visit.Prograf}}" min="0" max="9" oninput="prograf.value=value">
+                        <div class="invalid-feedback">用藥需介於 0 ~ 9 顆</div>
+                    </div>
+                    <div class="col-5"></div>
+                </div>
+                <div class="row justify-content-around mt-4 pb-2" id="other_medicine_block">
+                    <div class="col-5">
+                        <div>
+                            <div class="row g-3 align-items-center p-1 other_medicine_block">
+                                <div class="col-10">
+                                    <input type="text" name="OtherMedicineName" id="other_medicine" class="form-control"
+                                        pattern="[^\s]*" placeholder="其他用藥"> <!--hx-get="/add"
+                                                hx-target="#other_medicine_block" hx-swap="beforeend"
+                                                hx-include="[name=patient_id]"-->
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-primary btn-floating" hx-get="/add"
+                                        hx-target="#other_medicine_block" hx-include="[name=OtherMedicineName]"
+                                        hx-swap="afterend">
+                                        <i class="fas fa-plus fa-2x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row g-3 align-items-center p-1">
+                                <div class="col-9 range">
+                                    <input type="range" name="OtherMedicineCount" id="id_OtherMedicineName"
+                                        class="form-range" value="1" min="1" max="20"
+                                        oninput="number_OtherMedicineName.value=value">
+                                </div>
+                                <div class="col-3">
+                                    <input type="number" name="" id="number_OtherMedicineName"
+                                        class="form-control text-center" value="1" min="1" max="20"
+                                        oninput="id_OtherMedicineName.value=value">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="other_medicine_block"></div>
+                    </div>
+                    <div class="col-5"></div>
+                </div>
+
+                {% for i in other_medicine %}
+                <div class="row justify-content-around pt-3 pb-2" id="other_medicine_input_block">
+                    <div class="col-5">
+                        <div>
+                            <div class="row g-3 align-items-center p-1 other_medicine_block">
+                                <div class="col-10">
+                                    <input type="text" name="OtherMedicineName" id="other_medicine" class="form-control"
+                                        pattern="[^\s]*" placeholder="其他用藥" value="{{i.OtherMedicineName}}"> <!--hx-get="/add"
+                                            hx-target="#other_medicine_block" hx-swap="beforeend"
+                                            hx-include="[name=patient_id]"-->
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-primary btn-floating" hx-confirm="您確定要刪除嗎？"
+                                        hx-post="/add" hx-target="closest #other_medicine_input_block" hx-swap="delete">
+                                        <i class="fas fa-minus fa-2x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row g-3 align-items-center p-1">
+                                <div class="col-9 range">
+                                    <input type="range" name="OtherMedicineCount" id="id_{{i.OtherMedicineName}}"
+                                        class="range form-range" value="{{i.OtherMedicineCount}}" min="1" max="20"
+                                        oninput="number_{{i.OtherMedicineName}}.value=value">
+                                </div>
+                                <div class="col-3">
+                                    <input type="number" name="" id="number_{{i.OtherMedicineName}}"
+                                        class="form-control" value="{{i.OtherMedicineCount}}" min="1" max="20"
+                                        oninput="id_{{i.OtherMedicineName}}.value=value">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-5"></div>
+                </div>
+                {% endfor %}
+
+
+            </div>
+            <div class="container mt-5"
+                style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                <div class="row justify-content-center fs-1 fw-bold py-2" id="thymus_block">
+                    胸腺資訊
+                </div>
+                <div class="row justify-content-around pt-3">
+                    <div class="col-11">
+                        <table id="thymus_table" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">掃描日期</th>
+                                    <th colspan="2">斷層結果</th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in thymus %}
+                                {% if i.CtDate.strftime("%Y-%m-%d") != '0001-01-01' %}
+                                <tr>
+                                    <td>{{i.CtDate}}</td>
+
+                                    {% if i.ThymusStatus == 0 %}
+                                    <td style="background-color: lightgray;"></td>
+                                    <td>正常</td>
+                                    {% elif i.ThymusStatus == 1 %}
+                                    <td style="background-color: blue;"></td>
+                                    <td>胸腺萎縮</td>
+                                    {% elif i.ThymusStatus == 2 %}
+                                    <td style="background-color: yellow;"></td>
+                                    <td>胸腺增生</td>
+                                    {% else %}
+                                    <td style="background-color: red;"></td>
+                                    <td>胸腺瘤</td>
+                                    {% endif %}
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="row justify-content-around pt-3">
+                    <div class="col-5">
+                        <!-- 若一對一則需要此行 <input type="hidden" name="ThymusStatus" value="-1"> -->
+                        <label for="ct_date" class="form-label">電腦斷層日期</label>
+                        <input type="date" name="CtDate" id="ct_date" class="form-control" min="{{min_input_date}}"
+                        max="{{today}}" hx-get="/add" hx-trigger="change" hx-target="#thymus" hx-swap="beforeend" hx-include="[name=patient_id]"
+                            _="on change remove #thymus_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                    </div>
+                    <div class="col-5"></div>
+                </div>
+                <div class="row justify-content-around py-3" id="thymus">
+
+                </div>
+            </div>
+            <div class="container mt-5"
+                style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                <div id="blood_test_block" class="row justify-content-center fs-1 fw-bold py-2">
+                    抗體抽血資訊
+                </div>
+                <div class="row justify-content-around pt-3">
+                    <div class="col-11">
+                        <table id="blood_test_table" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>抽血日期</th>
+                                    <th>AchR抗體</th>
+                                    <th>TSH</th>
+                                    <th>fT4</th>
+                                    <th>ANA</th>
+                                    <th>Uric acid</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in blood_test %}
+                                {% if i.BloodTestDate.strftime("%Y-%m-%d") != '0001-01-01' %}
+                                <tr>
+                                    <td>{{i.BloodTestDate}}</td>
+                                    <td>{% if i.AchR > 0 %}{{'{:.2f}'.format(i.AchR)}}{% else %}未收集{% endif %}
+                                    </td>
+                                    <td>{% if i.TSH > 0 %}{{'{:.1f}'.format(i.TSH)}}{% else %}未收集{% endif %}
+                                    </td>
+                                    <td>{% if i.FreeThyroxine > 0 %}{{'{:.1f}'.format(i.FreeThyroxine)}}{% else
+                                        %}未收集{%
+                                        endif %}
+                                    </td>
+                                    <td>{% if i.ANA > 0 %}1:{{i.ANA}}{% else %}未收集{% endif %}</td>
+                                    <td>{% if i.UricAcid > 0 %}{{'{:.1f}'.format(i.UricAcid)}}{% else %}未收集{%
+                                        endif
+                                        %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+
+                <div class="row justify-content-around py-3">
+                    <div class="col-5">
+                        <!-- 若一對一則需要此行 <input type="hidden" name="ThymusStatus" value="-1"> -->
+                        <label for="blood_test_date" class="form-label">抽血日期</label>
+                        <input type="date" name="BloodTestDate" id="blood_test_date" class="form-control"
+                        min="{{min_input_date}}" max="{{today}}" hx-get="/add" hx-trigger="change" hx-target="#blood_test"
+                            hx-swap="beforeend" hx-include="[name=patient_id]" _="on change remove #blood_test_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                    </div>
+                    <div class="col-5"></div>
+                </div>
+                <div id="blood_test"></div>
+            </div>
+            <div class="container mt-5"
+                style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                <div class="row justify-content-center fs-1 fw-bold py-2" id="qol_block">
+                    生活品質量表(QOL)
+                </div>
+                <div class="row justify-content-center py-3">
+                    <div id="qol" class="col-10">
+                        <div class="pb-3">
+                            <label for="qol_date" class="form-label">施測日期{% if qol_date %} (上次日期: {{qol_date}}) {%
+                                endif
+                                %}</label>
+                            <input type="date" name="QOL_Date" id="qol_date" class="form-control" min="{{min_input_date}}" max="{{today}}"
+                                hx-get="/add" hx-trigger="change" hx-target="#qol" hx-include="[name=patient_id]"
+                                hx-swap="beforeend" _="on change remove #qol_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="container mt-5"
+                style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                <div id="qmg_block" class="row justify-content-center fs-1 fw-bold py-2">
+                    QMG Score量表
+                </div>
+                <div class="row justify-content-center py-3">
+                    <div id="qmg" class="col-10">
+                        <label for="qol_date" class="form-label">施測日期{% if qmg_date %} (上次日期: {{qmg_date}}) {% endif
+                            %}</label>
+                        <input type="date" name="QMG_Date" id="qmg_date" class="form-control" min="{{min_input_date}}" max="{{today}}"
+                            hx-get="/add" hx-trigger="change" hx-target="#qmg" hx-include="[name=patient_id]"
+                            hx-swap="beforeend" _="on change remove #qmg_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="container mt-5"
+                style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                <div id="mg_composite_block" class="row justify-content-center fs-1 fw-bold py-2">
+                    MG Composite量表
+                </div>
+                <div class="row justify-content-center py-3">
+                    <div id="mg_composite" class="col-10">
+                        <label for="mg_composite_date" class="form-label">施測日期{% if mg_composite_date %} (上次日期:
+                            {{mg_composite_date}}) {% endif
+                            %}</label>
+                        <input type="date" name="MGComposite_Date" id="mg_composite_date" class="form-control"
+                        min="{{min_input_date}}" max="{{today}}" hx-get="/add" hx-trigger="change" hx-target="#mg_composite"
+                            hx-include="[name=patient_id]" hx-swap="beforeend" _="on change remove #mg_composite_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-5"
+                style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                <div id="adl_block" class="row justify-content-center fs-1 fw-bold py-2">
+                    日常生活量表(ADL)
+                </div>
+                <div class="row justify-content-center py-3">
+                    <div id="adl" class="col-10">
+                        <label for="adl_date" class="form-label">施測日期{% if adl_date %} (上次日期: {{adl_date}}) {% endif
+                            %}</label>
+                        <input type="date" name="ADL_Date" id="adl_date" class="form-control" min="{{min_input_date}}"
+                            max="{{today}}" hx-get="/add" hx-trigger="change" hx-target="#adl"
+                            hx-include="[name=patient_id]" hx-swap="beforeend" _="on change remove #adl_input">
+                            <div class="invalid-feedback">日期需介於 {{min_input_date}} ~ {{today}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-5"
+                style="border-style:solid; background-color: rgba(251, 253, 255, 1); border-color: rgba(63, 109, 118, 1); border-radius: 1rem;">
+                <div id="assessment_block" class="row justify-content-center fs-1 fw-bold py-2">
+                    評估資訊
+                </div>
+                <div class="row justify-content-around py-2">
+                    <div class="col-5">自覺嚴重程度</div>
+                    <div class="col-5"></div>
+                    <div class="col-11">
+                        <div class="form-check form-check-inline col-3">
+                            <label for="mild" class="form-check-label">輕度</label>
+                            <input type="radio" name="SelfAssessment" id="mild" class="form-check-input" value="0" {% if
+                                visit.SelfAssessment==0 %} checked {% endif %}>
+                                
+                        </div>
+                        <div class="form-check form-check-inline col-3">
+                            <label for="moderate" class="form-check-label">中度</label>
+                            <input type="radio" name="SelfAssessment" id="moderate" class="form-check-input" value="1"
+                                {% if visit.SelfAssessment==1 %} checked {% endif %}>
+                        </div>
+                        <div class="form-check form-check-inline col-3">
+                            <label for="severe" class="form-check-label">重度</label>
+                            <input type="radio" name="SelfAssessment" id="severe" class="form-check-input" value="2" {%
+                                if visit.SelfAssessment==2 %} checked {% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-11 py-3">
+                        <label for="note" class="form-label">附註</label>
+                        <textarea name="Note" id="note" class="form-control" rows="4" maxlength="60"></textarea>
+                        <!-- <input type="text" name="Note" id="other_disease" class="form-control" max="30"> -->
+                    </div>
+                    <!-- <div class="col-4"></div> -->
+                </div>
+                <div class="row justify-content-around py-3">
+                    <div class="col-2 ms-4">
+                        <label class="col-form-label form-check-label" for="flexSwitchCheckChecked">是否需警示</label>
+                    </div>
+                    <div class="col-2 mt-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                                name="alert" value="1" {% if alert %} checked {% endif %} />
+                            <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-2"></div>
+                    <div class="col-2"></div>
+
+
+                </div>
+                <!-- <div class="row justify-content-around py-3">
+                    <div class="col-2 ms-4">
+                        <label class="col-form-label form-check-label" for="flexSwitchCheckChecked">是否需警示</label>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-check form-switch">
+                            <input type="hidden" name="Alert" value="0">
+                            <input class="form-check-input" type="checkbox" name="Alert" role="switch"
+                                id="flexSwitchCheckChecked" style="width: 4rem; height: 5vh;" value="1" {% if
+                                patient.Alert %} checked {% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-2"></div>
+                    <div class="col-2"></div>
+
+
+                </div> -->
+            </div>
+
+            <div class="py-4 d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary btn-lg">確認送出</button>
+            </div>
+            </div>
+
+
+        </main>
+    </form>
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/rangeInputConnectnumberInput.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/survey.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#visit_date_table').DataTable({
+                info: false,
+                searching: false,
+                scrollY: '24vh',
+                scrollCollapse: true,
+                paging: false,
+                order: [[0, 'desc']],
+
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#medicine_table').DataTable({
+                info: false,
+                searching: false,
+                scrollY: '32vh',
+                scrollCollapse: true,
+                paging: false,
+                order: [[0, 'desc']],
+                "columns": [
+                    { "width": "20%" },
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#thymus_table').DataTable({
+                info: false,
+                searching: false,
+                scrollY: '32vh',
+                scrollCollapse: true,
+                paging: false,
+                order: [[0, 'desc']],
+
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#blood_test_table').DataTable({
+                info: false,
+                searching: false,
+                scrollY: '32vh',
+                scrollCollapse: true,
+                paging: false,
+                order: [[0, 'desc']],
+
+            });
+        });
+    </script>
+    <script>
+        (() => {
+            'use strict';
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms).forEach((form) => {
+                form.addEventListener('submit', (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+
+</body>
+
+</html>

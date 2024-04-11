@@ -1,0 +1,61 @@
+<form hx-put="/updateBloodTest/{{patient_id}}/{{one_blood_test.BloodTestDate}}" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="PK_BloodTestID" value="{{one_blood_test.PK_BloodTestID}}">
+    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between">
+            <h4><b>修改抗體、抽血資料</b></h4>
+        </div>
+        <div class="container mt-3">
+            <div class="row mt-3">
+                <div class="col">
+                    <label for="AchR" class="col-form-label">AchR抗體</label>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control text-center" id="AchR" name="AchR"
+                    min="0.00" max="1.00" step="0.01" value="{% if one_blood_test.AchR > 0 %}{{'{:.2f}'.format(one_blood_test.AchR)}}{% else %}未收集{% endif %}">
+                </div>
+                <div class="col">
+                    <label for="tsh" class="col-form-label">TSH</label>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control text-center" id="tsh" name="TSH"
+                    min="0.0" max="50.0" step="0.1" value="{% if one_blood_test.TSH > 0 %}{{'{:.2f}'.format(one_blood_test.TSH)}}{% else %}未收集{% endif %}">
+                </div>
+                <div class="col">
+                    <label for="fT4" class="col-form-label">fT4</dlabel>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control text-center" id="fT4" name="FreeThyroxine"
+                    min="0.0" max="10.0" step="0.1" value="{% if one_blood_test.FreeThyroxine > 0 %}{{'{:.1f}'.format(one_blood_test.FreeThyroxine)}}{% else %}未收集{% endif %}">
+                </div>
+            </div>
+        </div>
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col">
+                    <label for="ANA" class="col-form-label">ANA</label>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control text-center" id="ANA" name="ANA"
+                    min="1" max="2560" value="{% if one_blood_test.ANA > 0 %}{{one_blood_test.ANA}}{% else %}未收集{% endif %}">
+                </div>
+                <div class="col">
+                    <label for="uric_acid" class="col-form-label">UricAcid</label>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control text-center" id="uric_acid" name="UricAcid"
+                    min="0.0" max="50.0" step="0.1" value="{% if one_blood_test.UricAcid > 0 %}{{'{:.1f}'.format(one_blood_test.UricAcid)}}{% else %}{% endif %}">
+                </div>
+                <div class="col">
+                </div>
+                <div class="col">
+                </div>
+            </div>
+        </div>
+       
+       
+    </div>
+
+    <button type="submit" class="btn btn-primary">完成</button>
+    <button type="submit" class="btn btn-danger" hx-get="/returnWatchVisitBloodTest/{{patient_id}}/{{one_blood_test.BloodTestDate}}">取消</button>
+</form>

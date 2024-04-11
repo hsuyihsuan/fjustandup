@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>模型管理</title>
+    <link href="{{ url_for('static', path='/assets/css/custom.css') }}" rel="stylesheet">
+
+    <script src="{{ url_for('static', path='/assets/javascript/jquery-3.6.3.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/DataTables/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/_hyperscript.min.js') }}"></script>
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/loader.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/plotly-2.20.0.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/assets/javascript/sweetalert2.all.min.js') }}"></script>
+
+    <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="d-flex justify-content-end">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" href="/aiControl">回上頁</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" aria-current="page" href="/rebuild">回重新建模</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" aria-current="page" href="/control">回控制介面</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" aria-current="page" href="/manage">回管理病歷</a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link active" href="/model">model</a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="mt-4">
+        <div class="row justify-content-center">
+            <h2 class="text-center text-nowrap"><strong>模型管理</strong></h2>
+            <p class="text-center text-nowrap">資料來源: 建模當下病歷追蹤所需欄位之最新資料</p>
+            <form action="/rebuild" method="post" enctype="multipart/form-data">
+                <h2>{{rebuild_data_count}}</h2>
+                <div class="row col-12">
+                    <table id="example" class="table table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>創建時間</th>
+                                <th data-mdb-toggle="popover"
+                                    data-mdb-content="<h6>所有情況中，正確判斷真假的比例<br>---------------------------------------------<br>Accuracy = (TP+TN) / (TP+TN+FP+FN)</h6>"
+                                    data-mdb-trigger="hover" data-mdb-placement="top" data-mdb-html="true">Accuracy</th>
+                                <th data-mdb-toggle="popover"
+                                    data-mdb-content="<h6>精確率與召回率的調和平均數<br>---------------------------------------------<br>F1Score = 2 / ( (1/ Precision) + (1/ Recall) )</h6>"
+                                    data-mdb-trigger="hover" data-mdb-placement="top" data-mdb-html="true">F1Score</th>
+                                <th data-mdb-toggle="popover"
+                                    data-mdb-content="<h6>查準率: 因惡化而住院的人中有幾個是預測正確的<br>---------------------------------------------<br>Precision = TP / (TP+FP)</h6>"
+                                    data-mdb-trigger="hover" data-mdb-placement="top" data-mdb-html="true">Precision
+                                </th>
+                                <th data-mdb-toggle="popover"
+                                    data-mdb-content="<h6>靈敏度: 代表實際因惡化而住院的人有多少被檢驗正確的<br>---------------------------------------------<br>Sensitivity = TP / (TP+FN)</h6>"
+                                    data-mdb-trigger="hover" data-mdb-placement="top" data-mdb-html="true">Sensitivity
+                                </th>
+                                <th data-mdb-toggle="popover"
+                                    data-mdb-content="<h6>特異度: 代表實際沒有因惡化而住院的人有多少被檢驗正確的<br>---------------------------------------------<br>Specificity = TN / (FP+TN)</h6>"
+                                    data-mdb-trigger="hover" data-mdb-placement="top" data-mdb-html="true">Specificity
+                                </th>
+                                <th data-mdb-toggle="popover"
+                                    data-mdb-content="<h6>AUC(Area Under Curve): 代表在ROC曲線下的面積</h6>"
+                                    data-mdb-trigger="hover" data-mdb-placement="top" data-mdb-html="true"
+                                    style="background-color: #FFF8E1;">AUC</th>
+                                <th>基本資料</th>
+                                <th>建模資料</th>
+                                <th>評估圖</th>
+                                <th>啟用</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i, j in ml_model %}
+                            <tr>
+                                <td>{{i.PK_CreateTime[:16]}}</td>
+                                <td>{{'{:.2f}'.format(i.Accuracy)}}</td>
+                                <td>{{'{:.2f}'.format(i.F1Score)}}</td>
+                                <td>{{'{:.2f}'.format(i.Precision)}}</td>
+                                <td>{{'{:.2f}'.format(i.Sensitivity)}}</td>
+                                <td>{{'{:.2f}'.format(i.Specificity)}}</td>
+                                <td style="background-color: #FFF8E1;">{{'{:.2f}'.format(i.AUC)}}</td>
+                                <td>{{j[0]}}筆 / {{i.Algorithm}}</td>
+                                <td><button class="btn btn-primary btn-sm"
+                                        hx-get="/watchRebuildData/{{i.PK_CreateTime}}" hx-target="#rebuild_data"
+                                        hx-trigger="click"
+                                        _="on htmx:afterOnLoad wait 10ms then add .show to #modal then add .show to #modal-backdrop">查看</button>
+                                </td>
+                                <td><button class="btn btn-success btn-sm" hx-get="/watchChart/{{i.PK_CreateTime}}"
+                                        hx-target="#evaluation_chart" hx-trigger="click"
+                                        _="on htmx:afterOnLoad wait 10ms then add .show to #modal2 then add .show to #modal-backdrop2">查看</button>
+                                </td>
+                                <td>{% if i.PK_CreateTime == active_model.FK_CreateTime %}啟用中{% else %}<button
+                                        class="btn btn-secondary btn-sm changeModel" hx-confirm="您確定要啟用此AI模型嗎？"
+                                        hx-get="/changeModel/{{i.PK_CreateTime}}">啟用</button>{% endif %}</td>
+                                <td><button {% if i.FK_AccountID==account_id %} hx-confirm="您確定要刪除此AI模型嗎？資料將無法再次調閱"
+                                        hx-get="deleteModel/{{i.PK_CreateTime}}" {% else %}
+                                        hx-confirm="此模型非您所建造, 無法直接刪除" hx-get="" {% endif %}
+                                        class="btn btn-danger btn-sm deleteMLModel">刪除</button></td>
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                    <div id="rebuild_data"></div>
+                    <div id="evaluation_chart"></div>
+
+            </form>
+        </div>
+    </div>
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    <script>
+        function closeModal() {
+            var container = document.getElementById("rebuild_data")
+            var backdrop = document.getElementById("modal-backdrop")
+            var modal = document.getElementById("modal")
+
+            modal.classList.remove("show")
+            backdrop.classList.remove("show")
+
+            setTimeout(function () {
+                container.removeChild(backdrop)
+                container.removeChild(modal)
+            }, 200)
+        }
+    </script>
+    <script>
+        function closeModal2() {
+            var container2 = document.getElementById("evaluation_chart")
+            var backdrop2 = document.getElementById("modal-backdrop2")
+            var modal2 = document.getElementById("modal2")
+
+            modal2.classList.remove("show")
+            backdrop2.classList.remove("show")
+
+            setTimeout(function () {
+                container2.removeChild(backdrop2)
+                container2.removeChild(modal2)
+            }, 200)
+        }
+    </script>
+
+    <script>
+        $(document).on("click", ".changeModel", function () {
+            location.reload();
+        });
+    </script>
+
+
+    <script>
+        $(document).on("click", ".deleteMLModel", function () {
+            location.reload();
+        });
+    </script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                // info: false,
+                // searching: false,
+                scrollX: true,
+                scrollY: '60vh',
+                // scrollCollapse: true,
+                paging: false,
+                order: [[6, 'desc']],
+
+            });
+        });
+    </script>
+    {% if success %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'AI模型建置成功',
+            text: '模型以AUC指標排序，可以創建時間查找'
+        })
+    </script>
+
+    {% endif %}
+
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!-- <form hx-put="/updateThymus/{{patient_id}}/{{one_thymus.CtDate}}" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="PK_CtID" value="{{one_thymus.PK_CtID}}">
+    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between">
+            <h4><b>修改胸腺資料</b></h4>
+        </div>
+        <div class="row my-3">
+            <div class="col-2">
+                <label for="thymus_result" class="form-label">電腦斷層結果</label>
+            </div>
+            <div class="col-10">
+                <div class="form-check form-check-inline col-2">
+                    <label for="normal" class="form-check-label">正常</label>
+                    <input type="radio" name="ThymusStatus" id="normal" class="form-check-input" value="0" {% if
+                        one_thymus.ThymusStatus==0 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline col-2">
+                    <label for="atrophy" class="form-check-label">胸腺萎縮</label>
+                    <input type="radio" name="ThymusStatus" id="atrophy" class="form-check-input" value="1" {% if
+                        one_thymus.ThymusStatus==1 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline col-2">
+                    <label for="hyperplasia" class="form-check-label">胸腺增生</label>
+                    <input type="radio" name="ThymusStatus" id="hyperplasia" class="form-check-input" value="2" {% if
+                        one_thymus.ThymusStatus==2 %} checked {% endif %}>
+                </div>
+                <div class="form-check form-check-inline col-2">
+                    <label for="thymoma" class="form-check-label">胸腺瘤</label>
+                    <input type="radio" name="ThymusStatus" id="thymoma" class="form-check-input" value="3" {% if
+                        one_thymus.ThymusStatus==3 %} checked {% endif %}>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-2">
+                <label for="thymus_description" class="form-label">基本病理描述</label>
+            </div>
+            <div class="col-6">
+                <input type="text" name="ThymusDescription" id="thymus_description" class="form-control"
+                    value="{% if one_thymus.ThymusDescription != 'na' %}{{one_thymus.ThymusDescription}}{% else %}{% endif %}"
+                    max="20">
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">完成</button>
+    <button type="submit" class="btn btn-danger" hx-get="/returnWatchVisitThymus/{{patient_id}}/{{one_thymus.CtDate}}">取消</button>
+</form> -->
+
+
+
+<div id="modal-backdrop4" class="modal-backdrop fade show" style="display:block;"></div>
+<div id="modal4" class="modal fade show" tabindex="-1" style="display:block;">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <form hx-put="/updateThymus/{{patient_id}}/{{one_thymus.CtDate}}">
+                <div class="modal-header">
+                    <h4 class="modal-title"><strong>修改就診基本資料</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="PK_CtID" value="{{one_thymus.PK_CtID}}">
+                    <input type="hidden" name="FK_PatientID" value="{{patient_id}}">
+                    <div class="container mt-3">
+                        <div class="d-flex justify-content-between">
+                            <h4><b>修改胸腺資料</b></h4>
+                        </div>
+                        <div class="row my-3">
+                            <div class="col-2">
+                                <label for="thymus_result" class="form-label">電腦斷層結果</label>
+                            </div>
+                            <div class="col-10">
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="normal" class="form-check-label">正常</label>
+                                    <input type="radio" name="ThymusStatus" id="normal" class="form-check-input"
+                                        value="0" {% if one_thymus.ThymusStatus==0 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="atrophy" class="form-check-label">胸腺萎縮</label>
+                                    <input type="radio" name="ThymusStatus" id="atrophy" class="form-check-input"
+                                        value="1" {% if one_thymus.ThymusStatus==1 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="hyperplasia" class="form-check-label">胸腺增生</label>
+                                    <input type="radio" name="ThymusStatus" id="hyperplasia" class="form-check-input"
+                                        value="2" {% if one_thymus.ThymusStatus==2 %} checked {% endif %}>
+                                </div>
+                                <div class="form-check form-check-inline col-2">
+                                    <label for="thymoma" class="form-check-label">胸腺瘤</label>
+                                    <input type="radio" name="ThymusStatus" id="thymoma" class="form-check-input"
+                                        value="3" {% if one_thymus.ThymusStatus==3 %} checked {% endif %}>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row my-3">
+                            <div class="col-2">
+                                <label for="thymus_description" class="form-label">基本病理描述</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="text" name="ThymusDescription" id="thymus_description" class="form-control"
+                                    value="{% if one_thymus.ThymusDescription != 'na' %}{{one_thymus.ThymusDescription}}{% else %}{% endif %}"
+                                    max="20">
+                            </div>
+                        </div>
+                        <div class="row justify-content-start my-3">
+                            <div class="col-9">
+                                <input type="hidden" name="RecordType" value="修改">
+                                <input type="hidden" name="Content" value="胸腺資料">
+                                <textarea name="Reason" class="form-control" id="thymus_update_reason" rows="5" cols="30"
+                                    required placeholder="請輸入修改原因(必填)，否則無法送出" onkeyup="success()"></textarea>
+                                <div class="invalid-feedback">請輸入修改原因</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal4()">關閉</button>
+                    <button type="submit" class="btn btn-primary basic_visit" id="thymus_button" disabled>完成修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function success() {
+            if (document.getElementById("thymus_update_reason").value === "") {
+                document.getElementById('thymus_button').disabled = true;
+            } else {
+                document.getElementById('thymus_button').disabled = false;
+            }
+        }
+    </script>
+</div>

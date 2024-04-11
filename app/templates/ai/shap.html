@@ -1,0 +1,34 @@
+<form id="modal-backdrop2" hx-put="/updateAccount" hx-target="this" hx-swap="outerHTML">
+    <div class="modal-backdrop fade show" style="display:block;"></div>
+    <div id="modal2" class="modal fade show" tabindex="-1" style="display:block;">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">AI醫療決策輔助Shap圖</h5>
+                </div>
+                <div class="modal-body" style="overflow-x: auto;">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col=12">
+                                <h1>{% if risk > 0 %}該病歷有<strong><span style="color: rgb(245, 39, 87);">高風險</span></strong>因惡化而住院{% else %}該病歷有<span style="color: rgb(30, 136, 229)">低風險</span>因惡化而住院{% endif %}</h1>
+                                <h5 style="color: gray">下方長條圖為各特徵影響<strong>"因惡化住院"</strong>風險程度分析，<span style="color: rgb(245, 39, 87);">紅色</span>為增加風險，<span style="color: rgb(30, 136, 229)">藍色</span>為降低風險</h5>
+                                <h5>(此功能是透過AI模式管理中，現有AI模型的啟用模型所產出的結果
+                                    對結果不太滿意? 選擇<a href="/aiManage">現有AI模型</a>或<a href="/rebuild">重新建模</a>)
+                                </h5>
+                                <img src="/ai/shap/shap.png" class="img-fluid rounded mx-auto d-block"> 
+                            </div>
+
+                        </div>
+                   
+                   
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                
+
+                    <button type="button" class="btn btn-secondary" onclick="closeModal2()">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

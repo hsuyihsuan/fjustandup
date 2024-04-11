@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帳號驗證</title>
+    <link href="{{ url_for('static', path='/assets/css/mdb.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/assets/css/sweetalert2.min') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/assets/javascript/sweetalert2.all.min.js') }}"></script>
+</head>
+
+<body>
+    <!-- Section: Design Block -->
+    <section class="text-center">
+        <!-- Background image -->
+        <div class="p-5 bg-image" style="
+          background-image: url('/static/assets/img/FJCU_Hospital.jpg');
+          height: 300px;
+          "></div>
+        <!-- Background image -->
+
+        <div class="card mx-4 mx-md-5 shadow-5-strong" style="
+          margin-top: -100px;
+          background: hsla(0, 0%, 100%, 0.8);
+          backdrop-filter: blur(30px);
+          ">
+            <div class="card-body py-5 px-md-5">
+
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="fw-bold mb-5">帳號驗證啟用</h2>
+                        <form action="/verifyAccount/{{account.RandomURL}}" method="post">
+                            <!-- 2 column grid layout with text inputs for the first and last names -->
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <input type="hidden" name="PK_AccountID" value="{{account.PK_AccountID}}">
+                                    <input type="hidden" name="UserRole" value="{{account.Job}}">
+                                    <div class="form-outline">
+                                        <input type="text" id="form3Example1" name="AccountName" class="form-control"
+                                            value="{{account.AccountName}}" readonly/>
+                                        <label class="form-label" for="form3Example1">固定帳號</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-outline">
+                                        <input type="text" id="form3Example2" name="UserName" class="form-control"
+                                            value="{{account.UserName}}" maxlength="35" pattern="[^0-9^\s]*"/>
+                                        <label class="form-label" for="form3Example2">用戶姓名</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email input -->
+                            <div class="form-outline mb-4">
+                                <input type="password" name="DefaultPassword" id="form3Example3" class="form-control" maxlength="8"
+                                    required data-mdb-showcounter="true" placeholder="於驗證信箱取得"/>
+                                <label class="form-label" for="form3Example3">預設密碼</label>
+                                <div class="form-helper"></div>
+                            </div>
+
+                            <!-- Password input -->
+                            <div class="form-outline mb-4">
+                                <input type="password" name="Password" id="form3Example4" class="form-control"
+                                    minlength="6" maxlength="30" required data-mdb-showcounter="true" placeholder="至少輸入6碼"/>
+                                <label class="form-label" for="form3Example4">重設新密碼</label>
+                                <div class="form-helper"></div>
+                            </div>
+
+                            <div class="form-outline mb-4">
+                                <input type="password" name="PasswordAgain" id="form3Example4" class="form-control"
+                                minlength="6" maxlength="30" required data-mdb-showcounter="true" placeholder="至少輸入6碼"/>
+                                <label class="form-label" for="form3Example4">再次確認新密碼</label>
+                                <div class="form-helper"></div>
+                            </div>
+                            <!-- Submit button -->
+                            <button type="submit" class="btn btn-primary btn-lg mb-4 fs-6">
+                                正式啟用
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section: Design Block -->
+    <script src="{{ url_for('static', path='/assets/javascript/mdb.min.js') }}"></script>
+    {% if notsame %}
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: '新設密碼不一致',
+            text: '請確保「重設新密碼」與「再次確認新密碼」的一致性',
+        })
+    </script>
+    {% endif %}
+</body>
+
+</html>
